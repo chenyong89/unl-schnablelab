@@ -13,8 +13,8 @@ def main():
         ('qc_missing', 'filter out SNPs with high missing rate'),
         ('qc_MAF', 'filter out SNP with extremely low MAF'),
         ('qc_hetero', 'filter out SNPs with high heterozygous rates'),
-        ('hapmap_to_map_ped', 'convert hmp file to plink map and ped file'),
-        ('ped_to_bed', 'convert plink ped format to binary bed format'),
+        ('hapmap_to_map_ped', 'convert hapmap file to Plink map and ped file'),
+        ('ped_to_bed', 'convert Plink ped format to binary bed format'),
         ('hapmap_to_vcf', 'transform hapmap format to vcf format'),
         ('hapmap_to_bimbam',
          'transform hapmap format to BIMBAM format for GEMMA'),
@@ -22,20 +22,21 @@ def main():
          'transform hapmap format to numeric format for GAPIT and FarmCPU'),
         ('hapmap_to_mvp', 'transform hapmap format to MVP genotypic format'),
         ('generate_kinship',
-         'using gemma to generate centered kinship matrix'),
-        ('generate_pca', 'using tassel to generate the first N PCs'),
+         'using GEMMA to generate centered kinship matrix'),
+        ('generate_pca', 'using TASSEL to generate the first N PCs'),
         ('independent_SNPs', 'estimate the number of independent SNPs'),
         ('single_code_to_double_code',
-         'convert single hmp to double type hmp'),
-        ('data_info', 'get basic info for a hmp file'),
-        ('cal_MAFs', 'calculate the MAF for all/specified SNPs in hmp'),
+         'convert single hapmap to double type hapmap format'),
+        ('data_info', 'get basic info for a hapmap file'),
+        ('cal_MAFs', 'calculate MAF for all/specified SNPs in hapmap file'),
         ('sort_hapmap',
-         'sort hmp file based on chromosome order and position'),
+         'sort hapmap file based on chromosome order and position'),
         ('combine_hapmap',
-         'combine split chromosome Hmps to a single large one'),
-        ('modify_sample_name', 'modify sample names in table header'),
-        ('extract_SNPs', 'extract a subset of specified SNPs from a hmp file'),
-        ('extract_samples', 'extract a subset of samples from a hmp file'),
+         'combine separated chromosome-level hapmap files to a single large '
+         'hapmap file'),
+        ('modify_sample_name', 'modify sample names in hapmap file header'),
+        ('extract_SNPs', 'extract a set of specified SNPs from a hapmap file'),
+        ('extract_samples', 'extract a set of samples from a hapmap file'),
         ('sampling_SNPs', 'randomly sample SNPs from a large hapmap file'),
     )
     p = ActionDispatcher(actions)
@@ -51,13 +52,13 @@ tassel = op.abspath(op.dirname(__file__)) + \
 
 def modify_sample_name(args):
     """
-    %prog modify_sample_name input_hmp names.csv
+    %prog modify_sample_name input_hmp name_csv
 
-    substitute the sample names in hmp header
-    name.csv:
-        comma separated without header line
-        1st column is old name
-        2nd column is the new name
+    modify sample names in hapmap file header
+    Args:
+        input_hmp: input hapmap filename
+        name_csv: comma separated no header csv file with 1st column being the
+            old name and 2nd column being the new name
     """
     p = OptionParser(modify_sample_name.__doc__)
     _, args = p.parse_args(args)
@@ -86,10 +87,11 @@ def modify_sample_name(args):
 def qc_missing(args):
     """
     %prog qc_missing input_hmp
-    Remove SNPs with high missing rate (1st step in QC pipeline)
+
+    filter out SNPs with high missing rate (1st step in QC pipeline)
     """
     p = OptionParser(qc_missing.__doc__)
-    p.add_option('--missing_cutoff', default=0.7, type='float', 
+    p.add_option('--missing_cutoff', default=0.7, type='float',
                  help='remove SNPs higher than specified missing rate cutoff')
     opts, args = p.parse_args(args)
     if len(args) == 0:
@@ -114,7 +116,8 @@ def qc_missing(args):
 def qc_MAF(args):
     """
     %prog qc_MAF input_hmp
-    Remove rare MAF SNPs (2nd step in QC pipeline)
+
+    filter out SNP with extremely low MAF (2nd step in QC pipeline)
     """
     p = OptionParser(qc_MAF.__doc__)
     p.add_option('--MAF_cutoff', default=0.01, type='float',
@@ -143,16 +146,18 @@ def qc_hetero(args):
     """
     %prog qc_hetero input_hmp
 
-    Remove high heterozygous rate SNPs (3rd step in QC pipeline)
+    filter out SNPs with high heterozygous rates (3rd step in QC pipeline)
     """
     p = OptionParser(qc_hetero.__doc__)
     p.add_option('--het_cutoff', default=0.1, type='float',
-                 help='SNPs higher than specified heterozygous rate will be removed')
+                 help='SNPs higher than specified heterozygous rate will be'
+                      ' removed')
     opts, args = p.parse_args(args)
     if len(args) == 0:
         sys.exit(not p.print_help())
     inputhmp, = args
-    outputhmp = Path(inputhmp).name.replace('.hmp', f'_het{opts.het_cutoff}.hmp')
+    outputhmp = Path(inputhmp).name.replace('.hmp',
+                                            f'_het{opts.het_cutoff}.hmp')
 
     hmp = ParseHapmap(inputhmp)
     n = 0
@@ -170,10 +175,10 @@ def qc_hetero(args):
 
 def extract_SNPs(args):
     """
-    %prog extract_SNPs input_hmp SNPs.csv
+    %prog extract_SNPs input_hmp SNPs_csv
 
-    extract a subset of SNPs defined in `SNPs.csv` from the input_hmp
-    put one snp id per row without header in the SNPs.csv file
+    extract a set of SNPs specified in SNPs_csv file from the input hapmap file
+    put one SNP id per row without header in the SNPs_csv file
     """
     p = OptionParser(extract_SNPs.__doc__)
     _, args = p.parse_args(args)
@@ -196,10 +201,11 @@ def extract_SNPs(args):
 
 def extract_samples(args):
     """
-    %prog extract_samples input_hmp SMs.csv
+    %prog extract_samples input_hmp sample_csv
 
-    extract a subset of samples defined in SMs.csv from the input_hmp
-    put one sample name per row without header in SMs.csv
+    extract a subset of samples defined in sample_csv file from the input
+    hapmap file
+    put one sample name per row without header in sample_csv
     """
     p = OptionParser(extract_samples.__doc__)
     _, args = p.parse_args(args)
@@ -232,7 +238,7 @@ def sampling_SNPs(args):
     """
     %prog sampling_SNPs input_hmp
 
-    efficiently pick up some SNPs from a huge hmp file
+    efficiently pick up some SNPs from a huge hapmap file
     """
     p = OptionParser(sampling_SNPs.__doc__)
     p.add_option('--downscale', default=10,
@@ -258,7 +264,7 @@ def hapmap_to_map_ped(args):
     """
     %prog hapmap_to_map_ped input_hmp
 
-    Convert hmp file to Plink map and ped files
+    convert hapmap file to Plink map and ped file
     """
     p = OptionParser(hapmap_to_map_ped.__doc__)
     _, args = p.parse_args(args)
@@ -289,8 +295,9 @@ def ped_to_bed(args):
     if len(args) == 0:
         sys.exit(not p.print_help())
     ped_prefix, = args
-    cmd_local = f'{plink} --noweb --file {ped_prefix} --make-bed --out {ped_prefix}'
-    print(f'cmd on local desktop:\n{cmd_local}\n')
+    cmd_local = f'{plink} --noweb --file {ped_prefix} --make-bed '\
+                f'--out {ped_prefix}'
+    print(f'ommand to run on premises:\n{cmd_local}\n')
     if not opts.disable_slurm:
         cmd_header = 'ml plink'
         cmd = f'plink --noweb --file {ped_prefix} --make-bed --out {ped_prefix}'
@@ -303,7 +310,7 @@ def hapmap_to_vcf(args):
     """
     %prog hapmap_to_vcf input_hmp
 
-    convert hmp to vcf format using tassel
+    transform hapmap format to vcf format
     """
     p = OptionParser(hapmap_to_vcf.__doc__)
     p.add_option('--disable_slurm', default=False, action="store_true",
@@ -313,11 +320,13 @@ def hapmap_to_vcf(args):
     if len(args) == 0:
         sys.exit(not p.print_help())
     hmpfile, = args
-    cmd_local = f'{tassel} -Xms512m -Xmx10G -fork1 -h {hmpfile} -export -exportType VCF\n'
-    print('cmd to run on local:\n', cmd_local)
+    cmd_local = f'{tassel} -Xms512m -Xmx10G -fork1 -h {hmpfile} -export'\
+                ' -exportType VCF\n'
+    print('command to run on premises:\n', cmd_local)
     if not opts.disable_slurm:
         cmd_header = 'ml tassel/5.2\n'
-        cmd = f'run_pipeline.pl -Xms512m -Xmx10G -fork1 -h {hmpfile} -export -exportType VCF\n'
+        cmd = f'run_pipeline.pl -Xms512m -Xmx10G -fork1 -h {hmpfile} -export'\
+              ' -exportType VCF\n'
         slurm_dict = vars(opts)
         slurm_dict['cmd_header'] = cmd_header
         create_slurm([cmd], slurm_dict)
@@ -363,7 +372,7 @@ def hapmap_to_numeric(args):
     """
     %prog hapmap_to_numeric hmp numeric_file_prefix
 
-    Convert hapmap genotypic data to numeric format for GAPIT and FarmCPU 
+    Convert hapmap genotypic data to numeric format for GAPIT and FarmCPU
     output two files: prefix.GD and prefix.GM
     """
     p = OptionParser(hapmap_to_numeric.__doc__)
@@ -439,8 +448,8 @@ def generate_kinship(args):
     """
     p = OptionParser(generate_kinship.__doc__)
     p.add_option('--type', default='1', choices=('1', '2'),
-                 help='specify the way to calculate the relateness'\
-                      '1: centered; 2: standardized')
+                 help='specify the way to calculate the relateness'
+                      ' 1: centered; 2: standardized')
     p.add_option('--output_dir', default='.',
                  help='specify the output dir')
     p.add_option('--disable_slurm', default=False, action="store_true",
@@ -461,7 +470,7 @@ def generate_kinship(args):
     cmd = '%s -g %s -p %s -gk %s -outdir %s -o gemma.centered.%s' \
         % (gemma, geno_mean, tmp_pheno, opts.type, opts.out_dir,
            Path(mean_prefix).name)
-    print('command to run on local:\n', cmd)
+    print('ommand to run on premises:\n', cmd)
     if not opts.disable_slurm:
         slurm_dict = vars(opts)
         create_slurm([cmd], slurm_dict)
@@ -486,7 +495,7 @@ def generate_pca(args):
                 f'-PrincipalComponentsPlugin -ncomponents {N} '\
                 f'-covariance true -endPlugin -export {out_prefix}_{N}PCA '\
                 f'-runfork1\n'
-    print('cmd to run on local:\n%s\n%s' % (cmd_local))
+    print('command to run on premises:\n', cmd_local)
 
     if not opts.disable_slurm:
         cmd_header = 'ml java/1.8\nml tassel/5.2'
@@ -508,13 +517,15 @@ def independent_SNPs(args):
     """
     p = OptionParser(independent_SNPs.__doc__)
     p.add_option('--disable_slurm', default=False, action="store_true",
-                 help='add this option to disable converting commands to slurm jobs')
+                 help='add this option to disable converting commands to slurm'
+                      ' jobs')
     p.add_slurm_opts(job_prefix=independent_SNPs.__name__)
     opts, args = p.parse_args(args)
     if len(args) == 0:
         sys.exit(not p.print_help())
     bed_prefix, output_fn = args
-    cmd = 'java -Xmx18g -jar %s --noweb --effect-number --plink-binary %s --genome --out %s' % (gec, bed_prefix, output_fn)
+    cmd = f'java -Xmx18g -jar {gec} --noweb --effect-number --plink-binary '\
+          f'{bed_prefix} --genome --out {output_fn}'
     print('cmd:\n%s\n' % cmd)
 
     if not opts.disable_slurm:
@@ -586,9 +597,11 @@ def cal_MAFs(args):
 def sort_hapmap(args):
     """
     %prog sort_hapmap input_hmp
-    Sort hmp based on chromosome order and position using python pandas. 
-    Can also use tassel command:
-     'run_pipeline.pl -Xms16g -Xmx18g -SortGenotypeFilePlugin -inputFile in_fn -outputFile out_fn -fileType Hapmap'
+
+    Sort hapmap based on chromosome order and position using python pandas.
+    Can also use tassel command for this purpose:
+     `run_pipeline.pl -Xms16g -Xmx18g -SortGenotypeFilePlugin -inputFile
+      in_fn -outputFile out_fn -fileType Hapmap`
     """
     p = OptionParser(sort_hapmap.__doc__)
     _, args = p.parse_args(args)
@@ -610,8 +623,8 @@ def combine_hapmap(args):
     combine multiple hapmap files into single one
 
     args:
-    N: number of hapmap files
-    pattern example: hmp321_agpv4_chr%s.hmp
+    N: number of separated hapmap files
+    pattern: hapmap filename pattern e.g., hmp321_agpv4_chr%s.hmp
     """
     p = OptionParser(combine_hapmap.__doc__)
     p.add_option('--header', default='yes', choices=('yes', 'no'),
