@@ -300,7 +300,8 @@ def ped_to_bed(args):
     print(f'command to run on premises:\n{cmd_local}\n')
     if not opts.disable_slurm:
         cmd_header = 'ml plink'
-        cmd = f'plink --noweb --file {ped_prefix} --make-bed --out {ped_prefix}'
+        cmd = f'plink --noweb --file {ped_prefix} --make-bed --out '\
+              f'{ped_prefix}'
         slurm_dict = vars(opts)
         slurm_dict['cmd_header'] = cmd_header
         create_slurm([cmd], slurm_dict)
