@@ -297,7 +297,7 @@ def ped_to_bed(args):
     ped_prefix, = args
     cmd_local = f'{plink} --noweb --file {ped_prefix} --make-bed '\
                 f'--out {ped_prefix}'
-    print(f'ommand to run on premises:\n{cmd_local}\n')
+    print(f'command to run on premises:\n{cmd_local}\n')
     if not opts.disable_slurm:
         cmd_header = 'ml plink'
         cmd = f'plink --noweb --file {ped_prefix} --make-bed --out {ped_prefix}'
@@ -470,7 +470,7 @@ def generate_kinship(args):
     cmd = '%s -g %s -p %s -gk %s -outdir %s -o gemma.centered.%s' \
         % (gemma, geno_mean, tmp_pheno, opts.type, opts.out_dir,
            Path(mean_prefix).name)
-    print('ommand to run on premises:\n', cmd)
+    print('command to run on premises:\n', cmd)
     if not opts.disable_slurm:
         slurm_dict = vars(opts)
         create_slurm([cmd], slurm_dict)
