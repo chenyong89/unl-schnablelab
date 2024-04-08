@@ -1,3 +1,7 @@
+'''
+conduct GWAS using various algorithms
+'''
+
 import os.path as op
 import sys
 from schnablelab.apps.base import ActionDispatcher, OptionParser, create_slurm

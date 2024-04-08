@@ -1,3 +1,7 @@
+'''
+QC genotype data and transform data format before conducting GWAS
+'''
+
 import sys
 import pandas as pd
 import os.path as op

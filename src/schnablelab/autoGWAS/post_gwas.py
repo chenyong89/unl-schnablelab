@@ -1,3 +1,7 @@
+'''
+conduct post-GWAS analyses and make plots
+'''
+
 import sys
 import numpy as np
 import pandas as pd
