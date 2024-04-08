@@ -317,16 +317,16 @@ library("compiler")
 source("http://zzlab.net/GAPIT/gapit_functions.txt")
 source("http://zzlab.net/FarmCPU/FarmCPU_functions.txt")
 setwd(".")
-myY <- read.table("{}", head = TRUE)
-myGM <- read.table("{}.GM", head = TRUE)
-myGD <- read.big.matrix("{}.GD", type="char", sep="\t", head = TRUE)
-myCV <- read.table("{}", head = TRUE)
+myY <- read.table("{pheno}", head = TRUE)
+myGM <- read.table("{geno_prefix}.GM", head = TRUE)
+myGD <- read.big.matrix("{geno_prefix}.GD", type="char", sep="\t", head = TRUE)
+myCV <- read.table("{pca}", head = TRUE)
 #Step 2: Run FarmCPU
 myFarmCPU <- FarmCPU(Y=myY, GD=myGD, GM=myGM, CV=myCV,
     method.bin="optimum", bin.size=c(5e5, 5e6, 5e7),
     bin.selection=seq(10, 100, 10),
     threshold.output=1,
-    memo='{}')
+    memo='{memo}')
 '''
 
 GAPIT_header = '''library(multtest)
@@ -339,28 +339,28 @@ library("scatterplot3d")
 source("http://zzlab.net/GAPIT/gapit_functions.txt")
 source("http://zzlab.net/GAPIT/emma.txt")
 setwd(".")
-myY <- read.table("{}", head=TRUE) # sep is the space related separator
-myGM <- read.table("{}.GM", head=TRUE)
-myGD <- read.table("{}.GD", head=TRUE)
-myCV <- read.table("{}", head=TRUE)
-myKI <- read.table("{}", head=FALSE)
+myY <- read.table("{pheno}", head=TRUE) # sep is the space related separator
+myGM <- read.table("{geno_prefix}.GM", head=TRUE)
+myGD <- read.table("{geno_prefix}.GD", head=TRUE)
+myCV <- read.table("{pca}", head=TRUE)
+myKI <- read.table("{kinship}", head=FALSE)
 #Step 2: Run GAPIT
-myGAPIT <- GAPIT(Y=myY, GD=myGD, GM=myGM, CV=myCV, KI=myKI, memo='{}')
+myGAPIT <- GAPIT(Y=myY, GD=myGD, GM=myGM, CV=myCV, KI=myKI, memo='{memo}')
 '''
 
 MVP_Data_header = '''
 library(MVP)
-MVP.Data(fileHMP="{}", sep.hmp="\t", sep.phe="\t", SNP.effect="Add",
-         fileKin=TRUE, filePC=TRUE, out="{}", priority="speed",)
+MVP.Data(fileHMP="{hapmap}", sep.hmp="\t", sep.phe="\t", SNP.effect="Add",
+         fileKin=TRUE, filePC=TRUE, out="{output}", priority="speed",)
 '''
 
 MVP_Run_header = '''
 library(MVP)
-phenotype <- read.table("{}", head=TRUE)
-genotype <- attach.big.matrix("{}.geno.desc")
-map <- read.table("{}.map", head = TRUE)
-Kinship <- attach.big.matrix("{}.kin.desc")
-Covariates <- attach.big.matrix("{}.pc.desc")
+phenotype <- read.table("{pheno}", head=TRUE)
+genotype <- attach.big.matrix("{output_prefix}.geno.desc")
+map <- read.table("{output_prefix}.map", head = TRUE)
+Kinship <- attach.big.matrix("{output_prefix}.kin.desc")
+Covariates <- attach.big.matrix("{output_prefix}.pc.desc")
 imMVP <- MVP(phe=phenotype, geno=genotype, map=map, K=Kinship,
              CV.MLM=Covariates, CV.FarmCPU=Covariates, maxLoop=10,
              method.bin="FaST-LMM", priority="speed", threshold=0.05,
