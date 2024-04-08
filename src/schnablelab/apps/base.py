@@ -9,7 +9,8 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-FOOTNOTE = "auto GWAS, High Throughput Genotyping & Phenotyping Python Package\n"
+FOOTNOTE = "GWAS, High Throughput Genotyping and Phenotyping tools"\
+           " developed in the Schnable Lab at UNL\n"
 
 
 def eprint(*args, **kwargs):
