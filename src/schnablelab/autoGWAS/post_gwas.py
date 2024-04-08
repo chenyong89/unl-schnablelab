@@ -26,14 +26,13 @@ def main():
          'extract effect sizes of selected SNPs from FarmCPU results'),
         ('shared_sig_SNPs',
          'find shared significant SNPs between GEMMA and FarmCPU'),
-        ('sig_SNPs',
+        ('get_sig_SNPs',
          'extract significant SNPs from GWAS results'),
         ('linked_SNPs', 'extract genetically linked SNPs using plink'),
         ('extract_geno_from_vcf', 'fetch genotypes for SNPs from vcf file'),
         ('extract_gene_from_gff3',
-         'extract gene names from gff3 for specified SNP list ')
-        ('extract_gene_func',
-         'extract functions of candidate genes'),
+         'extract gene names from gff3 for specified SNP list '),
+        ('extract_gene_func', 'extract functions of candidate genes'),
         ('extract_protein_seq',
          'extract protein sequences of condidated genes'),
         ('plot_effect_size', 'plot histgram of effect sizes'),
@@ -100,7 +99,8 @@ def plot_manhattan(args):
         labels.append(chr)
         grp.plot(kind='scatter', x='x', y='-log10Pvalue', s=3.5,
                  color=colors[color_idx], ax=ax)
-        label_pos = grp['x'].iloc[-1] - (grp['x'].iloc[-1] - grp['x'].iloc[0])/2
+        label_pos = grp['x'].iloc[-1] - (grp['x'].iloc[-1] -
+                                         grp['x'].iloc[0])/2
         label_POS.append(label_pos)
         color_idx += 1
 
@@ -297,13 +297,13 @@ def shared_sig_SNPs(args):
     print(f'shared significantly SNPs have saved to {output}')
 
 
-def sig_SNPs(args):
+def get_sig_SNPs(args):
     """
     %prog gwas_results output_fn
 
     extract the first top N significant SNPs from GWAS result
     """
-    p = OptionParser(sig_SNPs.__doc__)
+    p = OptionParser(get_sig_SNPs.__doc__)
     p.add_option('--MeRatio', type='float', default=1.0,
                  help="specify the ratio of independent SNPs, maize is 0.32,"
                       " sorghum is 0.53")
@@ -338,15 +338,17 @@ def linked_SNPs(args):
     """
     %prog input_SNPlist_file bed_prefix r2_cutoff output_prefix
 
-    extract linked SNPs using plink.
+    extract linked SNPs using Plink.
     """
     p = OptionParser(linked_SNPs.__doc__)
     p.add_option('--col_idx', type='int', default=0,
                  help='specify which column contains SNP ID (0-based)')
     p.add_option('--header', default='yes', choices=('yes', 'no'),
-                 help='add this option if there is no header in the input SNPlist file')
+                 help='add this option if there is no header in the input'
+                      ' SNPlist file')
     p.add_option('--disable_slurm', default=False, action="store_true",
-                 help='add this option to disable converting commands to slurm jobs')
+                 help='add this option to disable converting commands to slurm'
+                      ' jobs')
     p.add_slurm_opts(job_prefix=linked_SNPs.__name__)
     opts, args = p.parse_args(args)
 
@@ -381,9 +383,9 @@ def linked_SNPs(args):
 
 def extract_geno_from_vcf(args):
     """
-    %prog SNP_list_file VCF output
+    %prog SNP_list_file vcf_file output
 
-    extract genotypes for a bunch of SNPs from VCF
+    extract genotypes for a bunch of SNPs from vcf file
     """
     p = OptionParser(extract_geno_from_vcf.__doc__)
     p.add_option('--header', default='yes', choices=('yes', 'no'),
@@ -611,9 +613,12 @@ def pdf_to_png(args):
     %prog pdf2png dir_in dir_out
 
     convert pdf to png using imagemagick
+    Args:
+        dir_in: directory where pdf files reside
+        dir_out: output directory where png files will be saved
     """
     p = OptionParser(pdf_to_png.__doc__)
-    p.set_slurm_opts(jn=True)
+    p.add_slurm_opts(job_prefix='pdf_to_png')
     opts, args = p.parse_args(args)
     if len(args) == 0:
         sys.exit(not p.print_help())
@@ -624,16 +629,17 @@ def pdf_to_png(args):
         sys.exit('%s does not exist...')
     dir_path = Path(in_dir)
     pdfs = dir_path.glob('*.pdf')
+
+    cmd_header = 'ml imagemagick\n'
+    cmds = []
     for pdf in pdfs:
-        print(pdf)
-        prf = pdf.name.replace('.pdf', '')
+        pdf = pdf.name.replace('.pdf', '')
         png = pdf.name.replace('.pdf', '.png')
-        header = SLURM_header % (100, 15000, prf, prf, prf)
-        header += 'ml imagemagick\n'
         cmd = f'convert -density 300 {pdf} -resize 25% {out_path}/{png}\n'
-        header += cmd
-        with open(f'pdf2png.{prf}.slurm', 'w') as f:
-            f.write(header)
+        cmds.append(cmd)
+    slurm_dict = vars(opts)
+    slurm_dict['cmd_header'] = cmd_header
+    create_slurm(cmds, slurm_dict)
 
 
 if __name__ == '__main__':
