@@ -4,15 +4,12 @@ import math
 import pandas as pd
 import os.path as op
 from schnablelab.apps.natsort import natsorted
-from schnablelab import __version__
 from optparse import OptionParser as OptionP, OptionGroup, SUPPRESS_HELP
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
-JSHELP = "schnablelab utility libraries v%s\n" % (__version__)
 
-try:
-    basestring
-except NameError:
-    basestring = str
+FOOTNOTE = "auto GWAS, High Throughput Genotyping & Phenotyping Python Package\n"
 
 
 def eprint(*args, **kwargs):
@@ -63,7 +60,7 @@ class ActionDispatcher(object):
             action = action.rjust(max_action_len + 4)
             help += " | ".join((action, action_help[0].upper() +
                                 action_help[1:])) + '\n'
-        help += "\n" + JSHELP
+        help += "\n" + FOOTNOTE
         sys.stderr.write(help)
         sys.exit(1)
 
@@ -83,7 +80,7 @@ class ActionDispatcher(object):
 
 class OptionParser(OptionP):
     def __init__(self, doc):
-        OptionP.__init__(self, doc, epilog=JSHELP)
+        OptionP.__init__(self, doc, epilog=FOOTNOTE)
 
     def parse_args(self, args=None):
         dests = set()
@@ -141,7 +138,7 @@ class OptionParser(OptionP):
         group.add_option('--n_cpus_per_node', type='int', default=1,
                          help='number of cpus per node')
         group.add_option('--gpu_model',
-                         help="gpu_k40, gpu_p100, or gpu_v100")
+                         help="choose gpu_k40, gpu_p100, or gpu_v100")
         group.add_option('--n_cmds_per_slurm', type='int', default=1,
                          help='number of commands added to slurm')
         self.add_option_group(group)
@@ -162,7 +159,7 @@ class OptionParser(OptionP):
 def get_module_docstring(filepath):
     "Get module-level docstring of Python module at filepath, e.g. 'path/to/file.py'."
     co = compile(open(filepath).read(), filepath, 'exec')
-    if co.co_consts and isinstance(co.co_consts[0], basestring):
+    if co.co_consts and isinstance(co.co_consts[0], str):
         docstring = co.co_consts[0]
     else:
         docstring = None
@@ -239,7 +236,7 @@ def cutlist(lst, n):
 SLURM_header = '''#!/bin/sh
 #SBATCH --partition={partition}
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node={ncpus_per_node}
+#SBATCH --ntasks-per-node={n_cpus_per_node}
 #SBATCH --time={time}:00:00    # Run time in hh:mm:ss
 #SBATCH --mem={memory}    # --mem-per-cpu Maximum memory required per CPU (Mb)
 #SBATCH --job-name={jobname}
@@ -248,7 +245,7 @@ SLURM_header = '''#!/bin/sh
 '''
 
 
-def create_slurm(cmds, **kwargs):
+def create_slurm(cmds, kwargs):
     '''
     args:
         cmds (list): list of all the commands
@@ -271,8 +268,8 @@ def create_slurm(cmds, **kwargs):
         jobname = '%s_%s' % (kwargs['job_prefix'], range_label) \
             if len(cmds) > 1 else kwargs['job_prefix']
         kwargs['jobname'] = jobname
-        slurm_header = SLURM_header.format(kwargs)
-        if kwargs['pu_type'] == 'gpu':
+        slurm_header = SLURM_header.format(**kwargs)
+        if kwargs['instance_type'] == 'gpu':
             slurm_header += '#SBATCH --gres=gpu\n'
             if kwargs['gpu_model']:
                 slurm_header += "#SBATCH --constraint='{gpu_model}'\n"\
@@ -284,4 +281,4 @@ def create_slurm(cmds, **kwargs):
             slurm_header += '%s\n' % cmd
         with open('%s.slurm' % jobname, 'w') as f:
             f.write(slurm_header)
-        print('%s.slurm is ready to submit!' % jobname)
+        print('%s.slurm is ready to submit on HCC!' % jobname)
