@@ -1,21 +1,20 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "schnablelab"
 version = "1.0.0"
-keywords = ["GWAS Pipeline", "Phenotying", "UNL-HCC", "SNP Calling Pipeline", "Zooniverse"]
-license = {file = "LICENSE"}
-readme = "README.md"
 description = "GWAS piepline & High Throughput Phenotyping related codes developed in the Schnable Lab at UNL"
-requires-python = ">= 3.9"
-
 authors = [
   {name = "Chenyong Miao"},
   {name = "Alejandro D Pages"},
   {name = "James Schnable", email = "schnable@unl.edu"},
 ]
+readme = "README.md"
+requires-python = "== 3.10"
+keywords = ["GWAS Pipeline", "Phenotying", "UNL-HCC", "SNP Calling Pipeline", "Zooniverse"]
+license = {file = "LICENSE"}
 
 maintainers = [
   {name = "Chenyong Miao"},
@@ -30,7 +29,6 @@ dependencies = [
   "matplotlib",
   "seaborn",
   "tqdm",
-  ""
 ]
 
 [project.optional-dependencies]
@@ -38,7 +36,7 @@ deep_learning = ["torch"]
 
 [project.urls]
 Homepage = "https://example.com"
-Repository = "https://github.com/me/spam.git"
+Repository = "https://github.com/chenyong89/unl-schnablelab/tree/maint"
 
 [tool.setuptools]
 zip-safe = false
