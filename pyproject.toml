@@ -29,6 +29,7 @@ dependencies = [
   "matplotlib",
   "seaborn",
   "tqdm",
+  "scikit-image",
 ]
 
 [project.optional-dependencies]
