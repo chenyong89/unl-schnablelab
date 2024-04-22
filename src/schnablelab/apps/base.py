@@ -283,3 +283,20 @@ def create_slurm(cmds, kwargs):
         with open('%s.slurm' % jobname, 'w') as f:
             f.write(slurm_header)
         print('%s.slurm is ready to submit on HCC!' % jobname)
+
+
+def create_df_from_path(path, fn_pattern='*.png', cal_filesize=False):
+    """
+    generate a dataframe including all filenames under specific dir path
+
+    Arguments
+    ---------
+    fn_pattern: only files following this pattern will be included
+    """
+    fnpaths = list(path.glob(fn_pattern))
+    df = pd.DataFrame(dict(zip(['fnpath'], [fnpaths])))
+    df['dir'] = df['fnpath'].apply(lambda x: x.parent)
+    df['fn'] = df['fnpath'].apply(lambda x: x.name)
+    if cal_filesize:
+        df['size'] = df['fnpath'].apply(lambda x: op.getsize(x))
+    return df
