@@ -1,5 +1,5 @@
 '''
-QC genotype data and transform data format before conducting GWAS
+data QA/QC before conducting GWAS
 '''
 
 import sys
@@ -14,33 +14,32 @@ from .base import ParseHapmap, geno_to_value
 
 def main():
     actions = (
-        ('qc_missing', 'filter out SNPs with high missing rate'),
-        ('qc_MAF', 'filter out SNP with extremely low MAF'),
-        ('qc_hetero', 'filter out SNPs with high heterozygous rates'),
-        ('hapmap_to_map_ped', 'convert hapmap file to Plink map and ped file'),
-        ('ped_to_bed', 'convert Plink ped format to binary bed format'),
+        ('qc_missing', 'remove SNPs with high missing rate'),
+        ('qc_MAF', 'remove SNP with extremely low MAF'),
+        ('qc_hetero', 'remove SNPs with high heterozygous rates'),
+        ('hapmap_to_map_ped', 'convert hapmap format to Plink map/ped format'),
+        ('ped_to_bed', 'Convert Plink map/ped format to bed format'),
         ('hapmap_to_vcf', 'transform hapmap format to vcf format'),
         ('hapmap_to_bimbam',
          'transform hapmap format to BIMBAM format for GEMMA'),
         ('hapmap_to_numeric',
-         'transform hapmap format to numeric format for GAPIT and FarmCPU'),
-        ('hapmap_to_mvp', 'transform hapmap format to MVP genotypic format'),
+         'transform hapmap format to numeric format for GAPIT/FarmCPU'),
+        ('hapmap_to_mvp', 'transform hapmap format to numeric format for MVP'),
         ('generate_kinship',
-         'using GEMMA to generate centered kinship matrix'),
-        ('generate_pca', 'using TASSEL to generate the first N PCs'),
+         'generate centered kinship matrix'),
+        ('generate_pca', 'Generate first N PCs'),
         ('independent_SNPs', 'estimate the number of independent SNPs'),
-        ('single_code_to_double_code',
+        ('single_to_double',
          'convert single hapmap to double type hapmap format'),
-        ('data_info', 'get basic info for a hapmap file'),
-        ('cal_MAFs', 'calculate MAF for all/specified SNPs in hapmap file'),
+        ('data_info', 'get basic info of a hapmap file'),
+        ('cal_MAFs', 'calculate MAF of SNPs in hapmap file'),
         ('sort_hapmap',
-         'sort hapmap file based on chromosome order and position'),
+         'sort hapmap file based on chromosome order and SNP pos'),
         ('combine_hapmap',
-         'combine separated chromosome-level hapmap files to a single large '
-         'hapmap file'),
-        ('modify_sample_name', 'modify sample names in hapmap file header'),
-        ('extract_SNPs', 'extract a set of specified SNPs from a hapmap file'),
-        ('extract_samples', 'extract a set of samples from a hapmap file'),
+         'combine separated chr-level hapmap files into one hapmap file'),
+        ('modify_sample_name', 'modify sample names in hapmap file'),
+        ('extract_SNPs', 'subsample SNPs from a hapmap file'),
+        ('extract_samples', 'subsample samples from a hapmap file'),
         ('sampling_SNPs', 'randomly sample SNPs from a large hapmap file'),
     )
     p = ActionDispatcher(actions)
@@ -92,11 +91,11 @@ def qc_missing(args):
     """
     %prog qc_missing input_hmp
 
-    filter out SNPs with high missing rate (1st step in QC pipeline)
+    filter out SNPs with high missing rate
     """
     p = OptionParser(qc_missing.__doc__)
     p.add_option('--missing_cutoff', default=0.7, type='float',
-                 help='remove SNPs higher than specified missing rate cutoff')
+                 help='SNPs higher than this cutoff ratio will be removed')
     opts, args = p.parse_args(args)
     if len(args) == 0:
         sys.exit(not p.print_help())
@@ -121,11 +120,11 @@ def qc_MAF(args):
     """
     %prog qc_MAF input_hmp
 
-    filter out SNP with extremely low MAF (2nd step in QC pipeline)
+    filter out SNP with extremely low MAF
     """
     p = OptionParser(qc_MAF.__doc__)
     p.add_option('--MAF_cutoff', default=0.01, type='float',
-                 help='SNPs lower than specified cutoff rate will be removed.')
+                 help='SNPs lower than this cutoff ratio will be removed.')
     opts, args = p.parse_args(args)
     if len(args) == 0:
         sys.exit(not p.print_help())
@@ -150,12 +149,11 @@ def qc_hetero(args):
     """
     %prog qc_hetero input_hmp
 
-    filter out SNPs with high heterozygous rates (3rd step in QC pipeline)
+    filter out SNPs with high heterozygous rates
     """
     p = OptionParser(qc_hetero.__doc__)
     p.add_option('--het_cutoff', default=0.1, type='float',
-                 help='SNPs higher than specified heterozygous rate will be'
-                      ' removed')
+                 help='SNPs higher than this ratio will be removed')
     opts, args = p.parse_args(args)
     if len(args) == 0:
         sys.exit(not p.print_help())
@@ -268,7 +266,7 @@ def hapmap_to_map_ped(args):
     """
     %prog hapmap_to_map_ped input_hmp
 
-    convert hapmap file to Plink map and ped file
+    convert genotype file in hapmap format to Plink *.map and *.ped format
     """
     p = OptionParser(hapmap_to_map_ped.__doc__)
     _, args = p.parse_args(args)
@@ -289,7 +287,7 @@ def ped_to_bed(args):
     """
     %prog ped_to_bed ped_prefix
 
-    Convert plink ped/map to binary bed/bim/fam format using Plink
+    Convert Plink standard text format to binary format
     """
     p = OptionParser(ped_to_bed.__doc__)
     p.add_option('--disable_slurm', default=False, action="store_true",
@@ -315,7 +313,7 @@ def hapmap_to_vcf(args):
     """
     %prog hapmap_to_vcf input_hmp
 
-    transform hapmap format to vcf format
+    transform genotype file in hapmap format to vcf format
     """
     p = OptionParser(hapmap_to_vcf.__doc__)
     p.add_option('--disable_slurm', default=False, action="store_true",
@@ -341,7 +339,7 @@ def hapmap_to_bimbam(args):
     """
     %prog hapmap_to_bimbam hmp_file bimbam_file_prefix
 
-    Convert hmp genotypic data to GEMMA bimbam files (*.mean and *.annotation).
+    transform genotype file in hapmap format to BIMBAM format for GEMMA
     """
     p = OptionParser(hapmap_to_bimbam.__doc__)
     opts, args = p.parse_args(args)
@@ -377,8 +375,7 @@ def hapmap_to_numeric(args):
     """
     %prog hapmap_to_numeric hmp numeric_file_prefix
 
-    Convert hapmap genotypic data to numeric format for GAPIT and FarmCPU
-    output two files: prefix.GD and prefix.GM
+    transform genotype file in hapmap format to numeric format for GAPIT and FarmCPU
     """
     p = OptionParser(hapmap_to_numeric.__doc__)
     opts, args = p.parse_args(args)
@@ -416,8 +413,7 @@ def hapmap_to_mvp(args):
     """
     %prog hapmap_to_mvp hmp output_prefix
 
-    Convert hmp genotypic data to numeric format for MVP
-    output two fiels: prefix.numeric and prefix.map).
+    transform hapmap format to numeric format for MVP
     """
     p = OptionParser(hapmap_to_mvp.__doc__)
     opts, args = p.parse_args(args)
@@ -449,7 +445,7 @@ def generate_kinship(args):
     """
     %prog generate_kinship genotype.mean
 
-    Calculate kinship matrix file using gemma
+    Calculate kinship matrix file using GEMMA
     """
     p = OptionParser(generate_kinship.__doc__)
     p.add_option('--type', default='1', choices=('1', '2'),
@@ -464,7 +460,6 @@ def generate_kinship(args):
     if len(args) == 0:
         sys.exit(not p.print_help())
     geno_mean, = args
-    # generate a fake bimbam phenotype based on genotype file
     with open(geno_mean) as f:
         num_SMs = len(f.readline().split(',')[3:])
     mean_prefix = geno_mean.replace('.mean', '')
@@ -539,12 +534,12 @@ def independent_SNPs(args):
         create_slurm([cmd], slurm_dict)
 
 
-def single_code_to_double_code(args):
+def single_to_double(args):
     """
-    %prog single_code_to_double_code input_single_hmp 
+    %prog single_to_double input_single_hmp 
     convert single type hmp file to double type hmp file
     """
-    p = OptionParser(single_code_to_double_code.__doc__)
+    p = OptionParser(single_to_double.__doc__)
     _, args = p.parse_args(args)
     if len(args) == 0:
         sys.exit(not p.print_help())
@@ -581,7 +576,7 @@ def cal_MAFs(args):
     """
     %prog cal_MAFs input_hmp
 
-    calculate MAF for each SNP in hapmap file
+    calculate MAF for each SNP in hapmap genotype file
     """
     p = OptionParser(cal_MAFs.__doc__)
     _, args = p.parse_args(args)
@@ -625,11 +620,11 @@ def combine_hapmap(args):
     """
     %prog combine_hapmap N pattern output
 
-    combine multiple hapmap files into single one
+    combine multiple hapmap genotype files into single one
 
     args:
-    N: number of separated hapmap files
-    pattern: hapmap filename pattern e.g., hmp321_agpv4_chr%s.hmp
+    N: number of separated hapmap genotype files
+    pattern: hapmap genotype filename pattern e.g., hmp321_agpv4_chr%s.hmp
     """
     p = OptionParser(combine_hapmap.__doc__)
     p.add_option('--header', default='yes', choices=('yes', 'no'),

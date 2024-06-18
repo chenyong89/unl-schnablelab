@@ -16,10 +16,10 @@ def main():
     actions = (
         ('farmcpu', 'run GWAS using FarmCPU (muti-loci mixed model)'),
         ('gapit_cMLM', 'run GWAS using GAPIT (compressed Mixed Linear Model)'),
-        ('gemma_GLM', 'run GWAS using GEMMA (general linear model)'),
-        ('gemma_MLM', 'run GWAS using GEMMA (mixed linear model)'),
+        ('gemma_GLM', 'run GWAS using GEMMA general linear model'),
+        ('gemma_MLM', 'run GWAS using GEMMA mixed linear model'),
         ('mvp_data', 'prepare files for running MVP'),
-        ('mvp', 'Run both MLM and FarmCPU models in MVP'),
+        ('mvp', 'Run mixed linear model and FarmCPU model in MVP'),
         )
     p = ActionDispatcher(actions)
     p.dispatch(globals())

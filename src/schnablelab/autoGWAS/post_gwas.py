@@ -1,12 +1,11 @@
 '''
-conduct post-GWAS analyses and make plots
+Post-GWAS analyses
 '''
 
 import sys
 import numpy as np
 import pandas as pd
 import os.path as op
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 from pathlib import Path
 from subprocess import call
@@ -32,10 +31,10 @@ def main():
          'find shared significant SNPs between GEMMA and FarmCPU'),
         ('get_sig_SNPs',
          'extract significant SNPs from GWAS results'),
-        ('linked_SNPs', 'extract genetically linked SNPs using plink'),
-        ('extract_geno_from_vcf', 'fetch genotypes for SNPs from vcf file'),
+        ('linked_SNPs', 'extract genetically linked SNPs'),
+        ('extract_geno_from_vcf', 'fetch SNP genotypes from vcf file'),
         ('extract_gene_from_gff3',
-         'extract gene names from gff3 for specified SNP list '),
+         'extract gene names from gff3 for specified SNPs'),
         ('extract_gene_func', 'extract functions of candidate genes'),
         ('extract_protein_seq',
          'extract protein sequences of condidated genes'),
@@ -76,6 +75,8 @@ def plot_manhattan(args):
         else:
             opts.usecols = list(map(int, opts.usecols.split(',')))
             print('indics of columns to be read: %s' % opts.usecols)
+
+    import matplotlib.pyplot as plt
 
     gwas0 = ParseGWASresults(gwasfile, opts.software, sorting=opts.sort,
                              idx_cols=opts.idx_cols)
@@ -546,6 +547,9 @@ def plot_effect_size(args):
     if len(args) == 0:
         sys.exit(not p.print_help())
     EVlist, output_prefix = args
+
+    import matplotlib.pyplot as plt
+
     df = pd.read_csv(EVlist)
     EVs = df.iloc[:, -1]
     xlim = min(max(EVs), abs(min(EVs)))
@@ -572,7 +576,7 @@ def plot_MAF(args):
 
     import seaborn as sns
     import matplotlib.pyplot as plt
-    from matplotlib import rcParams
+
     fig, ax = plt.subplots(figsize=(4, 3.8))
     colors = ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3']
 
