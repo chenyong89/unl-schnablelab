@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "schnablelab"
 version = "1.0.0"
-description = "GWAS piepline & High Throughput Phenotyping related codes developed in the Schnable Lab at UNL"
+description = "daily code used in Chenyong's PhD research in the Schnable Lab at UNL"
 authors = [
   {name = "Chenyong Miao"},
   {name = "Alejandro D Pages"},
@@ -33,9 +33,6 @@ dependencies = [
   "opencv-python",
   "imutils",
 ]
-
-[project.optional-dependencies]
-deep_learning = ["torch"]
 
 [project.urls]
 Homepage = "https://example.com"
