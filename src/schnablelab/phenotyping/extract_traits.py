@@ -1,5 +1,7 @@
-# coding=utf-8
-
+"""
+extract sorghum inflorescence width and height, stem height, and plant height
+from RGB images
+"""
 
 import cv2
 import csv
@@ -476,8 +478,4 @@ if __name__ == "__main__":
                 'stem_height': stem_height,
                 'plant_height': plant_height}
         info_list.append(info)
-        # print([inflorescence_width, inflorescence_height, inflorescence_top,
-        #        inflorescence_bottom])
-    # cv2.waitKey(0)
-    # print(info_list)
     output_csv(info_list, plant_ID)

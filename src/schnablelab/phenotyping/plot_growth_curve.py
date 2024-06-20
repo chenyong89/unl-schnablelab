@@ -1,3 +1,6 @@
+"""
+plot time-series traits extracted from sorghum RGB images
+"""
 import csv
 import argparse
 import matplotlib.pyplot as plt

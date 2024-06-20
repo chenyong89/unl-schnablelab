@@ -1,6 +1,5 @@
 '''
-schnablelab CLI tool
-Calls Zookeeper class
+zooniverse CLI tools developed by Alex Pages
 '''
 import os
 import sys
@@ -18,7 +17,7 @@ def main():
         ('toy', 'random pick up some images for testing purporse'),
         ('divide', 'divide a large number of images to sevearl subsets'),
         ('upload', 'load images to zooniverse'),
-        ('BatchUpload', 'upload multiple dirs on HCC'),
+        ('batch_upload', 'upload multiple dirs on HCC'),
         ('export', 'Get annotation and other exports'),
         ('manifest', 'Generate a manifest for zooniverse subject set upload')
     )
@@ -26,16 +25,16 @@ def main():
     p.dispatch(globals())
 
 
-def BatchUpload(args):
+def batch_upload(args):
     '''
-    %prog BatchUpload dir1 dir2... project_id subject_id
+    %prog batch_upload dir1 dir2... project_id subject_id
 
     upload multiple dataset
     '''
-    p = OptionParser(BatchUpload.__doc__)
+    p = OptionParser(batch_upload.__doc__)
     p.add_option('--disable_slurm', default=False, action="store_true",
                  help='do not convert commands to slurm job')
-    p.add_slurm_opts(job_prefix=BatchUpload.__name__)
+    p.add_slurm_opts(job_prefix=batch_upload.__name__)
     opts, args = p.parse_args(args)
     if len(args) == 0:
         sys.exit(not p.print_help())
@@ -116,7 +115,7 @@ def upload(args):
         project. If there is no manifest will generate one.
     '''
 
-    from schnablelab.zooniverse.zootils import upload as load
+    from schnablelab.zooniverse.base import upload as load
 
     p = OptionParser(upload.__doc__)
     p.add_option('-s', '--subject_id', default=False,
@@ -159,7 +158,7 @@ def export(args):
     DESC: Fetches an export from the specified zooniverse project id.
     '''
 
-    from schnablelab.zooniverse.zootils import export as exp
+    from schnablelab.zooniverse.base import export as exp
 
     p = OptionParser(export.__doc__)
     p.add_option('-t', '--type', default='classifications',
@@ -185,10 +184,10 @@ def manifest(args):
 
     DESC: Generates a manifest inside the specified image directory.
     '''
-    from schnablelab.zooniverse.zootils import manifest as mani
+    from schnablelab.zooniverse.base import manifest as mani
 
     p = OptionParser(manifest.__doc__)
-    opts, args = p.parse_args(args)
+    _, args = p.parse_args(args)
 
     if len(args) != 1:
         exit(not p.print_help())

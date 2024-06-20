@@ -30,6 +30,8 @@ dependencies = [
   "seaborn",
   "tqdm",
   "scikit-image",
+  "opencv-python",
+  "imutils",
 ]
 
 [project.optional-dependencies]

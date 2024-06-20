@@ -23,7 +23,7 @@ def main():
 
 def submit(args):
     """
-    %prog dir
+    %prog submit dir
 
     Submit jobs under the dir
     """
@@ -66,7 +66,7 @@ def submit(args):
 
 def cancel(args):
     """
-    %prog
+    %prog cancel
 
     cancel running jobs on HCC
     """
@@ -109,7 +109,7 @@ quick_job_header = '''#!/bin/bash
 
 def quickjob(args):
     """
-    %prog job_name cmd
+    %prog quickjob job_name cmd
 
     generate a qucik slurm job for the cmd
     """

@@ -12,22 +12,22 @@ from schnablelab.apps.base import ActionDispatcher, OptionParser
 
 def main():
     actions = (
-        ('action1', 'list, open, read, close files'),
-        ('action2', 'use find touch command'),
+        ('walk', 'traverse files using python os.walk'),
+        ('find', 'traverse fiels using find command'),
             )
     p = ActionDispatcher(actions)
     p.dispatch(globals())
 
 
-def action1(args):
+def walk(args):
     """
-    %prog dir
+    %prog walk dir
 
-    traverse files
+    traverse files using python os.walk
     """
-    p = OptionParser(action1.__doc__)
+    p = OptionParser(walk.__doc__)
     p.add_option("--frac", default=0.1, type=float,
-                 help="one num-th files will be read.")
+                 help="percentage of files that will be read")
     opts, args = p.parse_args(args)
     if len(args) != 1:
         sys.exit(not p.print_help())
@@ -46,12 +46,13 @@ def action1(args):
         f.close()
 
 
-def action2(args):
+def find(args):
     """
-    %prog dir
-    use the find command to avoid the purge policy on a directory
+    %prog find dir
+
+    traverse fiels using find command
     """
-    p = OptionParser(action2.__doc__)
+    p = OptionParser(find.__doc__)
     opts, args = p.parse_args(args)
     if len(args) != 1:
         sys.exit(not p.print_help())

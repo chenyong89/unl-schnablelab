@@ -16,7 +16,8 @@ def main():
 
 def cpu(args):
     """
-    %prog
+    %prog cpu
+
     request a cpu node from hcc.
     """
     p = OptionParser(cpu.__doc__)
@@ -33,14 +34,15 @@ def cpu(args):
         cmd = f'srun --partition={opts.partition} --mem-per-cpu={opts.memory}'\
             f' --ntasks-per-node=6 --nodes=1 --time={opts.time}:0:0 --pty'\
             ' $SHELL\n'
-        print(cmd)
+        print(f'run below command to request a cpu node:\n{cmd}')
     else:
         sys.exit(not p.print_help())
 
 
 def gpu(args):
     """
-    %prog
+    %prog gpu
+
     request a gpu node from hcc.
     """
     p = OptionParser(gpu.__doc__)
@@ -58,7 +60,7 @@ def gpu(args):
             f'--constraint={opts.instance} --mem-per-cpu={opts.memory}'\
             f' --ntasks-per-node=1 --nodes=1 --time={opts.time}:0:0 '\
             '--pty $SHELL\n'
-        print(cmd)
+        print(f'run below command to request a gpu node:\n{cmd}')
     else:
         sys.exit(not p.print_help())
 

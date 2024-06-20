@@ -1,7 +1,6 @@
 
 import os
 import re
-import sys
 import csv
 import logging
 import os.path as osp
