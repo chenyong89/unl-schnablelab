@@ -1,0 +1,51 @@
+name: Run tests for schnablelab repo
+
+on:
+  push:
+    branches:
+    - 'main'
+  pull_request:
+    branches:
+    - 'main'
+
+jobs:
+  test_gc:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    steps:
+      - name: checkout codebase
+        uses: actions/checkout@v4
+      - name: setup Python ${{ matrix.python-version}}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: install repo
+        run: |
+          echo ${{ github.workspace }}
+          pip install .
+      - name: test command line
+        run: |
+          echo "-----pwd-----"
+          pwd
+          echo "-----ls-----"
+          ls
+          echo "-----PYTHONPATH-----"
+          export PYTHONPATH=$PWD/src
+          echo "PYTHONPATH=$PYTHONPATH"
+          python -m schnablelab.autoGWAS
+          python -m schnablelab.GC
+          python -m schnablelab.genotyping
+          python -m schnablelab.hcc
+          python -m schnablelab.phenotyping
+          python -m schnablelab.zooniverse
+      - name: run test script
+        run: python ./tests/test_gc.py
+      - name: upload artifacts if available
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug_figure
+          path: ./tests/*.png
+          if-no-files-found: ignore
+      
