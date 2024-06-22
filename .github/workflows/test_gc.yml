@@ -1,0 +1,68 @@
+name: Run tests for schnablelab repo
+
+on:
+  push:
+    branches:
+    - 'main'
+  pull_request:
+    branches:
+    - 'main'
+
+jobs:
+  test_gc:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    steps:
+      - name: checkout codebase
+        uses: actions/checkout@v4
+      - name: setup Python ${{ matrix.python-version}}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: install repo
+        run: |
+          echo ${{ github.workspace }}
+          pip install .
+      - name: test CLI schnablelab.autoGWAS
+        run: |
+          export PYTHONPATH=$PWD/src
+          echo "PYTHONPATH=$PYTHONPATH"
+          python -m schnablelab.autoGWAS
+      - name: test CLI schnablelab.GC
+        if: always()
+        run: |
+          export PYTHONPATH=$PWD/src
+          python -m schnablelab.GC
+      - name: test CLI schnablelab.genotyping
+        if: always()
+        run: |
+          export PYTHONPATH=$PWD/src
+          python -m schnablelab.genotyping
+      - name: test CLI schnablelab.hcc
+        if: always()
+        run: |
+          export PYTHONPATH=$PWD/src
+          python -m schnablelab.hcc
+      - name: test CLI schnablelab.phenotyping
+        if: always()
+        run: |
+          export PYTHONPATH=$PWD/src
+          python -m schnablelab.phenotyping
+      - name: test CLI schnablelab.zooniverse
+        if: always()
+        run: |
+          export PYTHONPATH=$PWD/src
+          python -m schnablelab.zooniverse
+      - name: run test script
+        if: always()
+        run: python ./tests/test_gc.py
+      - name: upload artifacts if available
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug_figure
+          path: ./debug_*.png
+          if-no-files-found: ignore
+      

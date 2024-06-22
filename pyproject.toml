@@ -12,7 +12,7 @@ authors = [
   {name = "James Schnable", email = "schnable@unl.edu"},
 ]
 readme = "README.md"
-requires-python = "== 3.10"
+requires-python = ">=3.10"
 keywords = ["GWAS Pipeline", "Phenotying", "UNL-HCC", "SNP Calling Pipeline", "Zooniverse"]
 license = {file = "LICENSE"}
 
