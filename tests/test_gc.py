@@ -61,7 +61,7 @@ def make_plot(gt_seq, before_seq, after_seq,
     ax3.set_title(f'after correction ({after_acc:.2f})')
     ax3.set_ylim(-0.5, 9.5)
     plt.tight_layout()
-    plt.savefig(f'{fn}.png', dpi=200)
+    plt.savefig(f'debug_{fn}.png', dpi=200)
 
 
 def main():
