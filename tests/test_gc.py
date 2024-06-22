@@ -74,8 +74,7 @@ def main():
         if after_acc > 0.05:
             make_plot(gt_seq, before_seq, after_seq, before_acc, after_acc,
                       seq_type)
-            raise Exception(f'correction accuracy for {seq_type} task > 5%, ',
-                            f'check {seq_type}.png for details!')
+            raise Exception(f'correction accuracy for {seq_type} task > 5%, check artifacts for details!')
 
 
 if __name__ == "__main__":
