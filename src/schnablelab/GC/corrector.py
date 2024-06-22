@@ -1,6 +1,7 @@
 """
 Correct Genotype Calls in biparental populations
 """
+from os import error
 import re
 import sys
 import logging
@@ -109,9 +110,13 @@ class Correction(object):
     """
     This class contains steps to correct the original seq per sample
     """
-    def __init__(self, config_params, orig_seq_without_idx_num,
+    def __init__(self, win_size, error_a, error_h, error_b,
+                 orig_seq_without_idx_num,
                  random_seed=None):
-        self.cargs = config_params
+        self.win_size = win_size
+        self.error_a = error_a
+        self.error_h = error_h
+        self.error_b = error_b
         self.seq_num = orig_seq_without_idx_num
         self.seq_num_no1 = self.seq_num.copy()
         if random_seed is not None:
@@ -121,14 +126,14 @@ class Correction(object):
 
     def get_rolling_geno(self):
         rolling_geno = self.seq_num_no1.rolling(
-            self.cargs.win_size, center=True)\
-            .apply(self.get_mid_geno, raw=True, args=(self.cargs,))
+            self.win_size, center=True)\
+            .apply(self.get_mid_geno, raw=True)
         return rolling_geno
 
     def get_rolling_score(self):
         rolling_score = self.seq_num_no1.rolling(
-            self.cargs.win_size, center=True)\
-            .apply(self.get_score, raw=True, args=(self.cargs,))
+            self.win_size, center=True)\
+            .apply(self.get_score, raw=True)
         return rolling_score
 
     def get_corrected(self):
@@ -187,28 +192,28 @@ class Correction(object):
         counts = Counter(np_array)
         return counts[0], counts[2], counts[9]
 
-    def get_mid_geno(self, np_array, cargs_obj):
+    def get_mid_geno(self, np_array):
         """
         return the genotype with highest probability in the central.
         """
         a_count, b_count, miss_count = self._count_genos(np_array)
         ab_count = a_count + b_count
-        if ab_count > cargs_obj.win_size//2:
-            a_ex_prob = binom.pmf(b_count, ab_count, cargs_obj.error_a)
-            h_ex_prob = binom.pmf(b_count, ab_count, 0.5+cargs_obj.error_h/2)
-            b_ex_prob = binom.pmf(b_count, ab_count, 1-cargs_obj.error_b)
+        if ab_count > self.win_size//2:
+            a_ex_prob = binom.pmf(b_count, ab_count, self.error_a)
+            h_ex_prob = binom.pmf(b_count, ab_count, 0.5+self.error_h/2)
+            b_ex_prob = binom.pmf(b_count, ab_count, 1-self.error_b)
             d = {key: value for (key, value) in
                  zip([0, 1, 2], [a_ex_prob, h_ex_prob, b_ex_prob])}
             return max(d, key=d.get)
         else:
             return np.nan
 
-    def get_score(self, np_array, cargs_obj):
+    def get_score(self, np_array):
         """
         calculate the score for each sliding window in the seq_num_no1
         """
         a_count, b_count, __ = self._count_genos(np_array)
-        if a_count+b_count > cargs_obj.win_size//2:
+        if a_count+b_count > self.win_size//2:
             return a_count/float(b_count) if b_count != 0 \
                 else a_count/(b_count+0.1)
         else:
@@ -304,16 +309,18 @@ def correct(args):
                 final_seq_no_idx = seq_no_idx
             else:
                 logging.debug('correction round 1...')
-                _correction = Correction(cargs, seq_no_idx_num,
-                                         opts.random_seed)
+                _correction = Correction(
+                    cargs.win_size, cargs.error_a, cargs.error_h,
+                    cargs.error_b, seq_no_idx_num, opts.random_seed)
                 corrected_seq = _correction.get_corrected()
                 corrected_n = get_corrected_num(seq_no_idx_num,
                                                 corrected_seq)
                 round_n = 2
                 while round_n <= opts.itertimes:
                     logging.debug(f'correction round {round_n}...')
-                    _correction = Correction(cargs, seq_no_idx_num,
-                                             opts.random_seed)
+                    _correction = Correction(
+                        cargs.win_size, cargs.error_a, cargs.error_h,
+                        cargs.error_b, seq_no_idx_num, opts.random_seed)
                     corrected_seq = _correction.get_corrected()
                     corrected_n1 = get_corrected_num(
                         seq_no_idx_num, corrected_seq)

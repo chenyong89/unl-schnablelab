@@ -13,8 +13,7 @@ from subprocess import call
 from .base import ParseGWASresults, cal_MAF_row
 from schnablelab.apps.base import (ActionDispatcher,
                                    OptionParser,
-                                   create_slurm,
-                                   SLURM_header)
+                                   create_slurm)
 
 plink = op.abspath(op.dirname(__file__))+'/../apps/plink'
 faOneRecord = op.abspath(op.dirname(__file__))+'/../apps/faOneRecord'
@@ -109,7 +108,7 @@ def plot_manhattan(args):
         label_POS.append(label_pos)
         color_idx += 1
 
-    cutoff = -np.log10(opts.pvalue/(opts.MeRatio * gwas0.numberofSNPs))
+    cutoff = -np.log10(opts.pvalue/(opts.MeRatio * gwas0.num_snp))
     ax.axhline(cutoff, linestyle=':', linewidth=0.6, color='k', alpha=0.7)
 
     x_limit_right = df_plot['x'].iloc[-1]
@@ -163,7 +162,8 @@ def count_peaks(args):
 
     if opts.software == 'other':
         if opts.usecols is None:
-            sys.exit('--idx_cols option must be specified if software is other')
+            sys.exit(
+                "--idx_cols option must be specified if software is 'other'")
         else:
             idx_cols = list(map(int, opts.idx_cols.split(',')))
             print('indics of columns to be read: ', idx_cols)
@@ -331,8 +331,8 @@ def get_sig_SNPs(args):
             sys.exit('--usecols must be specified if software is other')
         else:
             opts.usecols = list(map(int, opts.usecols.split(',')))
-    gwas0 = ParseGWASresults(gwasfile, opts.software, usecols=opts.usecols)
-    df_significant = gwas0.SignificantSNPs(p_cutoff=0.05, MeRatio=opts.MeRatio)
+    gwas0 = ParseGWASresults(gwasfile, opts.software, idx_cols=opts.usecols)
+    df_significant = gwas0.SignificantSNPs(p_level=0.05, MeRatio=opts.MeRatio)
     if opts.chrom != 'all':
         df_significant = df_significant[df_significant['chr'] == opts.chrom]
     df_significant.to_csv(output_fn, index=False, sep='\t')
@@ -427,7 +427,7 @@ def extract_geno_from_vcf(args):
     df_geno = pd.read_csv('SNPs_keys.tmp.vcf', delim_whitespace=True,
                           header=None)
     df_geno.columns = df_header
-    df_geno0 = df_geno[['#CHROM','POS','ID','REF','ALT']]
+    df_geno0 = df_geno[['#CHROM', 'POS', 'ID', 'REF', 'ALT']]
     df_geno1 = df_geno[df_geno.columns[9:]]
     df_geno2 = df_geno1.applymap(lambda x: x.split(':')[0])
     df_geno_final = pd.concat([df_geno0, df_geno2], axis=1)

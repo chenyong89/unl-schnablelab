@@ -75,7 +75,7 @@ def modify_sample_name(args):
     cmd = 'sed '
     for _, row in pd.read_csv(names_csv, header=None).iterrows():
         old_nm, new_nm = row[0], row[1]
-        if old_nm not in hmp.SMs:
+        if old_nm not in hmp.samples:
             print(f'{id} was not found in hmp...')
         else:
             cmd += f"-e '1s/{old_nm}/{new_nm}/' "
@@ -105,8 +105,8 @@ def qc_missing(args):
     hmp = ParseHapmap(inputhmp)
     n = 0
     with open(outputhmp, 'w') as f:
-        f.write(hmp.headerline)
-        pbar = tqdm(hmp.Missings, total=hmp.numSNPs)
+        f.write(hmp.header)
+        pbar = tqdm(hmp.missing_rate, total=hmp.num_snp)
         for i, miss in pbar:
             if miss <= opts.missing_cutoff:
                 f.write(i)
@@ -129,13 +129,14 @@ def qc_MAF(args):
     if len(args) == 0:
         sys.exit(not p.print_help())
     inputhmp, = args
-    outputhmp = Path(inputhmp).name.replace('.hmp', f'_maf{opts.MAF_cutoff}.hmp')
+    outputhmp = Path(inputhmp).name.replace(
+        '.hmp', f'_maf{opts.MAF_cutoff}.hmp')
 
     hmp = ParseHapmap(inputhmp)
     n = 0
     with open(outputhmp, 'w') as f:
-        f.write(hmp.headerline)
-        pbar = tqdm(hmp.MAFs, total=hmp.numSNPs)
+        f.write(hmp.header)
+        pbar = tqdm(hmp.maf, total=hmp.num_snp)
         for i, maf in pbar:
             if maf >= opts.MAF_cutoff:
                 f.write(i)
@@ -164,8 +165,8 @@ def qc_hetero(args):
     hmp = ParseHapmap(inputhmp)
     n = 0
     with open(outputhmp, 'w') as f:
-        f.write(hmp.headerline)
-        pbar = tqdm(hmp.Heteros, total=hmp.numSNPs)
+        f.write(hmp.header)
+        pbar = tqdm(hmp.heteros, total=hmp.num_snp)
         for i, het in pbar:
             if het <= opts.het_cutoff:
                 f.write(i)
@@ -190,7 +191,7 @@ def extract_SNPs(args):
     outputhmp = Path(inputhmp).name.replace('.hmp', '_subSNPs.hmp')
 
     hmp = ParseHapmap(inputhmp)
-    df_hmp = hmp.AsDataframe()
+    df_hmp = hmp.to_df()
 
     IDs = pd.read_csv(SNPcsv, header=None)[0].values
     num_IDs = IDs.shape[0]
@@ -225,7 +226,7 @@ def extract_samples(args):
 
     subsm = hmp.attributes
     for id in IDs:
-        if id not in hmp.SMs:
+        if id not in hmp.samples:
             print(f'{id} was not found in hmp...')
         else:
             subsm.append(id)
@@ -276,11 +277,12 @@ def hapmap_to_map_ped(args):
     output_prefix = Path(inputhmp).name.split('.hmp')[0]
 
     hmp = ParseHapmap(inputhmp)
-    df_map, df_ped = hmp.to_map_ped(missing=False)
+    df = hmp.to_df()
+    df_map, df_ped = hmp.to_map_ped(df, missing=False)
     print('saving map file...')
     df_map.to_csv(f'{output_prefix}.map', sep='\t', index=False, header=None)
     print('saving ped file...')
-    df_ped.to_csv('{output_prefix}.ped', sep='\t', index=False, header=None)
+    df_ped.to_csv(f'{output_prefix}.ped', sep='\t', index=False, header=None)
 
 
 def ped_to_bed(args):
@@ -375,7 +377,8 @@ def hapmap_to_numeric(args):
     """
     %prog hapmap_to_numeric hmp numeric_file_prefix
 
-    transform genotype file in hapmap format to numeric format for GAPIT and FarmCPU
+    transform genotype file in hapmap format to numeric format for GAPIT and
+    FarmCPU
     """
     p = OptionParser(hapmap_to_numeric.__doc__)
     opts, args = p.parse_args(args)
@@ -536,7 +539,7 @@ def independent_SNPs(args):
 
 def single_to_double(args):
     """
-    %prog single_to_double input_single_hmp 
+    %prog single_to_double input_single_hmp
     convert single type hmp file to double type hmp file
     """
     p = OptionParser(single_to_double.__doc__)
@@ -587,7 +590,7 @@ def cal_MAFs(args):
     outputcsv = Path(inputhmp).name.replace('.hmp', '.maf.csv')
     hmp = ParseHapmap(inputhmp)
     with open(outputcsv, 'w') as f:
-        pbar = tqdm(hmp.MAFs, total=hmp.numSNPs, desc='get MAF', position=0)
+        pbar = tqdm(hmp.maf, total=hmp.num_snp, desc='get MAF', position=0)
         for i, maf in pbar:
             f.write(f'{maf}\n')
             pbar.set_description('calculating chromosome {i.split()[2]}')

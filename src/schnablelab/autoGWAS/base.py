@@ -118,7 +118,7 @@ class ParseHapmap():
             pbar.set_description(f'converting {col}...')
         df_ped = np.where(df_ped == '', 0, df_ped)
         df_ped = pd.DataFrame(df_ped, dtype='str')
-        df_ped[1] = self.SMs
+        df_ped[1] = self.samples
         return df_map, df_ped
 
     def count_genotype(self, geno_list, a1, a2):
@@ -144,7 +144,7 @@ class ParseHapmap():
         return num_homo1, num_homo2, num_hete
 
     @property
-    def count_missing(self):
+    def missing_rate(self):
         '''
         yield (line, missing rate) for each line
         '''
@@ -183,13 +183,13 @@ class ParseHapmap():
                         yield i, maf
 
     @property
-    def Heteros(self):
+    def heteros(self):
         '''
         calculate heterozygous reate for each line the table
 
         yield (line, heterozgous rate) for each line
         '''
-        with open(self.fn) as f:
+        with open(self.filename) as f:
             next(f)
             for i in f:
                 j = i.split()
@@ -199,7 +199,8 @@ class ParseHapmap():
                 except ValueError:
                     yield i, 1
                 else:
-                    num_homo1, num_homo2, num_hete = self.count_genotype(j[11:], a1, a2)
+                    num_homo1, num_homo2, num_hete = self.count_genotype(
+                        j[11:], a1, a2)
                     if num_hete > max(num_homo1, num_homo2):
                         yield i, 1
                     else:
@@ -219,7 +220,7 @@ class ParseGWASresults():
             idx_cols (list): specify the indices of which columns to use if
                 using other GWAS tools
         '''
-        self.pvalue_col = filename
+        self.filename = filename
         self.software = software
         self.sorting = sorting
         self.idx_cols = idx_cols
