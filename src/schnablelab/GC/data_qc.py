@@ -30,8 +30,6 @@ def qc_missing(args):
     p.add_option('--cutoff_snp', default=0.5, type='float',
                  help=('SNPs with missing rate higher than this cutoff will '
                        'be removed'))
-    p.add_option('--rm_bad_samples', default=False, action="store_true",
-                 help='whether remove samples with high missing ratio')
     p.add_option('--cutoff_sample', type='float',
                  help=('if --rm_bad_samples is True, sample whose missing '
                        'rate higher than this cutoff will be removed. Sample '
@@ -51,10 +49,6 @@ def qc_missing(args):
 
     if len(args) != 2:
         sys.exit(not p.print_help())
-
-    if opts.rm_bad_samples and not opts.cutoff_sample:
-        eprint('specify --cutoff_sample option if --rm_bad_samples is enabled')
-        sys.exit(1)
 
     inmap, outmap = args
     inputmatrix = opts.input or inmap
@@ -79,19 +73,18 @@ def qc_missing(args):
     n0_snp = sum(chr_nums.values())
     n1_snp, n0_sm = df1.shape
     pct = n1_snp/float(n0_snp)*100
-    print(f'{n0_snp} SNP markers before quality control.')
-    print(f'{n1_snp}({pct:.1f}%) markers left after QC')
+    print(f'{n0_snp} SNP markers before QC; '
+          f'{n1_snp}({pct:.1f}%) markers left after QC')
 
-    if opts.rm_bad_samples:
-        print('start quality control on samples')
+    if opts.cutoff_sample:
         good_samples = df1.apply(
             lambda x: (x == opts.missing).sum()/n1_snp, axis=0) \
             <= opts.cutoff_sample
         df2 = df1.loc[:, good_samples]
         n1_sm = df2.shape[1]
         pct_sm = n1_sm/float(n0_sm)*100
-        print(f'{n0_sm} samples before quality control.')
-        print(f'{n1_snp}({pct_sm:.1f}%) markers left after QC')
+        print(f'{n0_sm} samples before quality control; '
+              f'{n1_sm}({pct_sm:.1f}%) samples left after QC')
         df2.to_csv(outputmatrix, sep='\t', index=True)
     else:
         df1.to_csv(outputmatrix, sep='\t', index=True)
@@ -372,7 +365,7 @@ def qc_dup(args):
     """
     %prog qc_dup corrected.matrix output.matrix
 
-    QC on duplicated markers by by merging consecutive markers with same
+    QC on duplicated markers by merging consecutive markers with same
     genotype
     """
     p = OptionParser(qc_dup.__doc__)
@@ -384,7 +377,7 @@ def qc_dup(args):
                        'merged. missing values will not be counted.'))
     p.add_option('--missing', default='-',
                  help='character for missing value in genotype matrix file')
-    p.add_option("--logfile", default='GC.bin.log',
+    p.add_option("--logfile", default='GC.qc_dup.log',
                  help="specify the file saving running info")
     opts, args = p.parse_args(args)
     if len(args) != 2:

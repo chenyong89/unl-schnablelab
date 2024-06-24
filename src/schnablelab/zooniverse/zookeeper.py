@@ -15,9 +15,9 @@ from schnablelab.apps.base import (ActionDispatcher, OptionParser, cutlist,
 def main():
     actions = (
         ('toy', 'random pick up some images for testing purporse'),
-        ('divide', 'divide a large number of images to sevearl subsets'),
+        ('divide', 'divide a large number of images to several subsets'),
         ('upload', 'load images to zooniverse'),
-        ('batch_upload', 'upload multiple dirs on HCC'),
+        ('batch_upload', 'Upload multiple dirs on HCC to Zooniverse'),
         ('export', 'Get annotation and other exports'),
         ('manifest', 'Generate a manifest for zooniverse subject set upload')
     )
