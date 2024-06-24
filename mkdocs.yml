@@ -85,4 +85,4 @@ extra_javascript:
 nav:
   - Home: index.md
   - Installation: installation.md
-  - Genotype Corrector Tutorial: gc_tutorials.md
+  - Genotype-Corrector Tutorial: gc_tutorial.md
