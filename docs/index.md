@@ -1,16 +1,16 @@
-# Welcome to the `schnablelab` package 
+# Welcome to the `schnablelab` Package 
 
-This package consists of codes developed by Chenyong Miao when he was a PhD student in the Schnable Lab at the University of Nebraska-Lincoln from 2016-2020. The majority of code was used in Chenyong's daily research on high throughput phenotyping, genotyping, as well as GWAS (genome-wide association studies). Code has been wrapped up in command line tools to faciliate analyses on local computers and HCC (Holland Computing Center) campus server. The package is organized into different modules and each module is composed by couple of scripts which contains multiple actions/functions to conduct specific tasks. The general usage of command line follows this pattern:
+The schnablelab package comprises code developed by Chenyong Miao during his PhD at the Schnable Lab, University of Nebraska-Lincoln, spanning from 2016 to 2020. This code primarily supported Chenyong's research activities in high-throughput phenotyping/genotyping, and genome-wide association studies (GWAS). The functionality has been encapsulated into command-line tools to facilitate analyses on both local computers and the HCC (Holland Computing Center) campus server. The package is structured into distinct modules, each containing several scripts that encompass multiple functions tailored for specific tasks. The general command-line usage adheres to the following pattern:
 
 ```
 $ python -m schnablelab.[MODULE].[SCRIPT] [ACTION]
 ```
 
-To use this pakcage, please follow the [installation](installation.md) page to install the package first. 
+To tuilize this pakcage, please follow the [installation](installation.md) page for initial setup instructions.
 
 ## autoGWAS module
 
-This module helps preparing data, conduting GWAS using various statistical models, and analyzing GWAS results
+This module facilitates data preparation, conducts GWAS using various statistical models, and analyzes GWAS results.
 
 ```
 $ python -m schnablelab.autoGWAS
@@ -42,7 +42,7 @@ Available SCRIPTs:
 
 ## phenotyping module
 
-This module is developed to process high throughtput phenotyping data generated from UNL Greenhouse Innovation Center. 
+This module processes high-throughput phenotyping data generated from the UNL Greenhouse Innovation Center.
 
 ```
 $ python -m schnablelab.phenotyping
@@ -58,7 +58,7 @@ Available SCRIPTs:
 
 ## zooniverse module
 
-This module only has one script `zookeeper` which helps uploading and donwloading data to/from the zooniverse crowdsourcing platform. 
+This module features a single script, `zookeeper`, designed to upload and download data to/from the Zooniverse crowdsourcing platform.
 
 ```
 $ python -m schnablelab.zooniverse.zookeeper
@@ -77,7 +77,7 @@ Available ACTIONs:
 
 ## GC (Genotype-Corrector) module
 
-GC is a bioinformatics tool to impuate missing data and correct wrong genotype calls in bi-parental population. You can find more details about this tool from our [publication](https://doi.org/10.1038/s41598-018-28294-0). Please follow more detailed [tutorials](gc_tutorial.md) to learn how to conduct GC on your own data. 
+GC is a bioinformatics tool used to impute missing data and correct erroneous genotype calls in bi-parental populations. For more details, refer to our [publication](https://doi.org/10.1038/s41598-018-28294-0). Detailed [tutorials](gc_tutorial.md) on conducting GC with your own data can be found here.
 
 ```
 $ python -m schnablelab.GC
@@ -92,7 +92,7 @@ Available SCRIPTs:
 
 ## hcc module
 
-hcc module provides convienet tools when conducting analyses on HCC 
+The hcc module provides convenient tools for analyses conducted on the HCC.
 
 ```
 $ python -m schnablelab.hcc
@@ -105,3 +105,10 @@ Available SCRIPTs:
      request | Request a node
     traverse | Traverse files to avoid purge policy on hcc
 ```
+
+---
+
+Please note that most of the code in this repository was developed over four years ago. Some scripts, particularly those related to HCC, may no longer be compatible with the updates to the campus server since my graduation in 2020. I apologize for any outdated or inefficient code that may still be present in the package.
+
+- Chenyong Miao
+- 06/23/2024
