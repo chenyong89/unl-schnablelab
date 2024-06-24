@@ -1,27 +1,27 @@
 [Section1]
-#choose your population type, F2 or RIL
+# population type, F2 or RIL
 Population_type: RIL
 
 [Section2]
-#the character used for homozygous genotype
+# the character for homozygous genotype
 Letter_for_homo1: A
 
-#the character used for heterozygous genotype
+# character for heterozygous genotype
 Letter_for_hete: X
 
-#the character used for alternative homozygous genotype
+# character for alternative homozygous genotype
 Letter_for_homo2: B
 
-#the character used to represent missing genotype calls
+# character for missing genotype calls
 Letter_for_missing_data: -
 
 [Section3]
-#genotype error rate of homo1
+# genotype error rate of homo1
 error_rate_for_homo1: 0.03
 
-#genotype error rate of homo2
+# genotype error rate of homo2
 error_rate_for_homo2: 0.01
 
 [Section4]
-#lenght of the sliding window (must be odd numbers)
+# lenght of the sliding window (must be an odd number)
 Sliding_window_size: 11

@@ -1,0 +1,88 @@
+site_name: The Schnable Lab@UNL
+repo_name: unl-schnablelab
+repo_url: https://github.com/chenyong89/unl-schnablelab
+
+theme:
+  name: material
+  # logo: assets/lab_logo.jpeg
+  features:
+    - content.code.annotate
+    - content.tabs.link
+    - navigation.tabs
+  highlightjs: true
+  hljs_style: monokai
+  hljs_languages:
+    - yaml
+    - rust
+    - python
+  palette: 
+
+        # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - mkdocstrings:
+      watch:
+      - src/simulation 
+      handlers:
+        python:
+          import:
+          - https://docs.python.org/3/objects.inv
+          - https://mkdocstrings.github.io/autorefs/objects.inv
+          options:
+            docstring_style: numpy
+  - search
+  - autorefs
+  - tags
+  - mkapi
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - codehilite:
+      guess_lang: false
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - mkautodoc
+  - pymdownx.highlight:
+      use_pygments: true
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.arithmatex
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+        - css/termynal.css
+        - css/custom.css
+
+docs_dir: docs
+
+extra_javascript:
+  - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
+
+
+#---- ---------------- Navigation ---------------- -----#
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Genotype-Corrector Tutorial: gc_tutorial.md

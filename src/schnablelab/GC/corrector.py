@@ -1,7 +1,6 @@
 """
 Correct Genotype Calls in biparental populations
 """
-from os import error
 import re
 import sys
 import logging

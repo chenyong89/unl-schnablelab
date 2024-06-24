@@ -1,6 +1,5 @@
 """
-create, submit, canceal jobs. Find more details at HCC document:
-<https://hcc-docs.unl.edu>
+create, submit, canceal jobs
 """
 
 import sys
