@@ -9,7 +9,7 @@ on:
     - 'main'
 
 jobs:
-  test_gc:
+  test_CLI_and_GC:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -57,7 +57,7 @@ jobs:
           python -m schnablelab.zooniverse
       - name: run test script
         if: always()
-        run: python ./tests/test_gc.py
+        run: python ./tests/test_cli_gc.py
       - name: upload artifacts if available
         if: always()
         uses: actions/upload-artifact@v4
