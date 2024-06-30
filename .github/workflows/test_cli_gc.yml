@@ -9,7 +9,7 @@ on:
     - 'main'
 
 jobs:
-  test_gc:
+  test_CLI_and_GC:
     runs-on: ubuntu-latest
     strategy:
       matrix:
