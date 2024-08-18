@@ -272,7 +272,7 @@ def sort_pos(args):
     """
     %prog sort_pos input.map output.sorted.map
 
-    sort markers based on position 
+    sort markers based on position
     """
     p = OptionParser(sort_pos.__doc__)
     opts, args = p.parse_args(args)

@@ -1,8 +1,8 @@
 ;number of linkage groups: 67
-;The size of the linkage groups are: 
-;		3	1	1	1	4	2	1	2	1	1	2	1	1	1	2	1	1	3	1	1	3	2	1	1	2	1	2	1	1	1	1	1	3	2	1	1	1	3	1	2	2	1	1	1	1	1	1	2	1	1	1	3	1	1	1	1	2	117	63	68	71	78	74	64	48	58	46	
-;The number of bins in each linkage group: 
-;		3	1	1	1	4	2	1	2	1	1	2	1	1	1	2	1	1	3	1	1	3	2	1	1	2	1	2	1	1	1	1	1	3	2	1	1	1	3	1	2	2	1	1	1	1	1	1	2	1	1	1	3	1	1	1	1	2	87	52	40	44	45	49	46	34	25	24	
+;The size of the linkage groups are:
+;		3	1	1	1	4	2	1	2	1	1	2	1	1	1	2	1	1	3	1	1	3	2	1	1	2	1	2	1	1	1	1	1	3	2	1	1	1	3	1	2	2	1	1	1	1	1	1	2	1	1	1	3	1	1	1	1	2	117	63	68	71	78	74	64	48	58	46
+;The number of bins in each linkage group:
+;		3	1	1	1	4	2	1	2	1	1	2	1	1	1	2	1	1	3	1	1	3	2	1	1	2	1	2	1	1	1	1	1	3	2	1	1	1	3	1	2	2	1	1	1	1	1	1	2	1	1	1	3	1	1	1	1	2	87	52	40	44	45	49	46	34	25	24
 
 
 ;lowerbound:27.723 upperbound: 27.723 cost after initialization:27.723
@@ -1176,5 +1176,3 @@ chn10_70921408	45.243
 chn10_22263848	46.595
 chn10_10290357	47.984
 ;ENDOFGROUP
-
-

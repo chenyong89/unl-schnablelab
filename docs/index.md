@@ -1,4 +1,4 @@
-# Welcome to the `schnablelab` Package 
+# Welcome to the `schnablelab` Package
 
 The schnablelab package comprises code developed by Chenyong Miao during his PhD at the Schnable Lab, University of Nebraska-Lincoln, spanning from 2016 to 2020. This code primarily supported Chenyong's research activities in high-throughput phenotyping/genotyping, and genome-wide association studies (GWAS). The functionality has been encapsulated into command-line tools to facilitate analyses on both local computers and the HCC (Holland Computing Center) campus server. The package is structured into distinct modules, each containing several scripts that encompass multiple functions tailored for specific tasks. The general command-line usage adheres to the following pattern:
 

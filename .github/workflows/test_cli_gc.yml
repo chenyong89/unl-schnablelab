@@ -65,4 +65,3 @@ jobs:
           name: debug_figure
           path: ./debug_*.png
           if-no-files-found: ignore
-      

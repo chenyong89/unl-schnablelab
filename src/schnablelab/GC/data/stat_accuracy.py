@@ -70,7 +70,7 @@ if __name__ == "__main__":
     else:
         print('''usage:\npython statistical_correct.py original.map precorrect.map corrected.map
 
-The script only used for testing to compute the true positive rate, true negative rate, and accuracy. 
+The script only used for testing to compute the true positive rate, true negative rate, and accuracy.
 
 original.map: the original map file without any missing data and wrong genotypes
 precorrect.map: the map file was artificially introduced the missing and wrong genotypes.
