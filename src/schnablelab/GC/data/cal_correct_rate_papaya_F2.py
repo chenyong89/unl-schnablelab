@@ -54,4 +54,3 @@ if __name__ == "__main__":
         cal_correct_rate(sys.argv[1], sys.argv[2])
     else:
         print('usage: cal_correct_rate.py original_map_file corrected_map_file')
-

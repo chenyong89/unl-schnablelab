@@ -25,7 +25,7 @@ Here, `RIL_X0.4miss0.35.map` is an [example input genotype table](https://github
 
 ### QC on SNPs with Distorted Segregation Ratio
 
-This step removes SNPs with highly distorted segregation ratios. 
+This step removes SNPs with highly distorted segregation ratios.
 
 ```
 $ python -m schnablelab.GC.data_qc qc_sd qc_missing.map qc_segregation.map --population RIL
@@ -68,7 +68,7 @@ Once you have the genotype table after QC and the configuration file, run Genoty
 $ python -m schnablelab.GC.corrector correct config.txt qc_dup.map --itertimes 5
 ```
 
-Upon completion, the corrected genotype table `qc_dup.corrected.map` will be generated where missing values are imputed and genotype calls are corrected. Adding `--debug` parameter to above command line will generate an output table `qc_dup.corrected.map.debug` containing both corrected genotype calls followed by the original ones highlighted in parentheses as shown below. 
+Upon completion, the corrected genotype table `qc_dup.corrected.map` will be generated where missing values are imputed and genotype calls are corrected. Adding `--debug` parameter to above command line will generate an output table `qc_dup.corrected.map.debug` containing both corrected genotype calls followed by the original ones highlighted in parentheses as shown below.
 
 ![debug_table](figures/debug.png)
 

@@ -15,7 +15,7 @@ theme:
     - yaml
     - rust
     - python
-  palette: 
+  palette:
 
         # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
@@ -34,7 +34,7 @@ theme:
 plugins:
   - mkdocstrings:
       watch:
-      - src/simulation 
+      - src/simulation
       handlers:
         python:
           import:

@@ -5,7 +5,7 @@ git clone git@github.com:chenyong89/unl-schnablelab.git
 cd unl-schnablelab
 ```
 
-### step 2. install `schnablelab` package using pip 
+### step 2. install `schnablelab` package using pip
 ```
 pip install .
 ```
