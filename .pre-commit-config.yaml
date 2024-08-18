@@ -1,6 +1,6 @@
 default_language_version:
   python: python3.10
-exclude: 'src/schnablelab/apps/*'
+exclude: '^src/schnablelab/apps/*'
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -13,6 +13,7 @@ repos:
     - id: check-toml
     - id: check-xml
     - id: check-yaml
+      exclude: 'mkdocs.yml'
     - id: sort-simple-yaml
     - id: detect-private-key
     - id: check-merge-conflict
