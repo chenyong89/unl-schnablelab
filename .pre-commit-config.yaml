@@ -1,0 +1,25 @@
+default_language_version:
+  python: python3.10
+exclude: 'src/schnablelab/apps/*'
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+    - id: check-added-large-files
+    - id: check-case-conflict
+    - id: check-docstring-first
+    - id: check-json
+    - id: pretty-format-json
+    - id: check-toml
+    - id: check-xml
+    - id: check-yaml
+    - id: sort-simple-yaml
+    - id: detect-private-key
+    - id: check-merge-conflict
+    - id: check-symlinks
+    - id: mixed-line-ending
+    - id: name-tests-test
+    - id: no-commit-to-branch
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+    - id: requirements-txt-fixer
