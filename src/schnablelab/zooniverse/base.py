@@ -1,4 +1,3 @@
-
 import os
 import re
 import csv
@@ -26,7 +25,7 @@ log.addHandler(logging.StreamHandler())
 
 
 def upload(imgdir, projid, dataset_name, opts, **kwargs):
-    '''
+    """
     %prog upload imgdir zoo_proj_id
     Does:
         - Uploads images from the specified image directory to zooniverse
@@ -44,7 +43,7 @@ def upload(imgdir, projid, dataset_name, opts, **kwargs):
             -desc: The zooniverse project id to upload the images to.
     Returns:
         None
-    '''
+    """
 
     if opts.quiet:
         log.setLevel(logging.INFO)
@@ -79,22 +78,27 @@ def upload(imgdir, projid, dataset_name, opts, **kwargs):
             except PanoptesAPIException as e:
                 log.error("Could not set subject set display name")
                 for arg in e.args:
-                    if arg == 'You must be logged in to access this resource.':
+                    if arg == "You must be logged in to access this resource.":
                         log.error("User credentials invalid")
                         exit(False)
                     log.error("> " + arg)
-                    if arg == 'Validation failed:' \
-                              + ' Display name has already been taken':
-                        log.info("To use {} as the display name,"
-                                 + " get the subject set id from zooniverse"
-                                 + " and call this command with --subject_id <id>")
-                        if not utils.get_yn('Try again?'):
+                    if (
+                        arg
+                        == "Validation failed:"
+                        + " Display name has already been taken"
+                    ):
+                        log.info(
+                            "To use {} as the display name,"
+                            + " get the subject set id from zooniverse"
+                            + " and call this command with --subject_id <id>"
+                        )
+                        if not utils.get_yn("Try again?"):
                             exit(False)
                 continue
 
             break
 
-    if not osp.isfile(osp.join(imgdir, 'manifest.csv')):
+    if not osp.isfile(osp.join(imgdir, "manifest.csv")):
         log.info("Generating manifest")
         if opts.extension:
             manif_gen_succeeded = manifest(imgdir, ext=opts.extension)
@@ -104,12 +108,12 @@ def upload(imgdir, projid, dataset_name, opts, **kwargs):
             log.error("No images to upload.")
             return False
 
-    mfile = open(osp.join(imgdir, 'manifest.csv'), 'r')
+    mfile = open(osp.join(imgdir, "manifest.csv"), "r")
     fieldnames = mfile.readline().strip().split(",")
     mfile.seek(0)
     reader = csv.DictReader(mfile)
 
-    if 'filename' not in fieldnames:
+    if "filename" not in fieldnames:
         log.error("Manifest file must have a 'filename' column")
         return False
 
@@ -121,13 +125,16 @@ def upload(imgdir, projid, dataset_name, opts, **kwargs):
     for row in reader:
         try:
             # getsize returns file size in bytes
-            filesize = osp.getsize(row['filename']) / 1000
+            filesize = osp.getsize(row["filename"]) / 1000
             if filesize > 256:
-                log.warning("File size of {}KB is larger than recommended 256KB"
-                            .format(filesize))
+                log.warning(
+                    "File size of {}KB is larger than recommended 256KB".format(
+                        filesize
+                    )
+                )
 
             temp_subj = pan.Subject()
-            temp_subj.add_location(row['filename'])
+            temp_subj.add_location(row["filename"])
             temp_subj.metadata.update(row)
             temp_subj.links.project = project
             temp_subj.save()
@@ -148,14 +155,22 @@ def upload(imgdir, projid, dataset_name, opts, **kwargs):
             success_count += 1
 
         success_count += 1
-        log.debug("{}- {} - success"
-                  .format(success_count, str(osp.basename(row['filename']))))
+        log.debug(
+            "{}- {} - success".format(
+                success_count, str(osp.basename(row["filename"]))
+            )
+        )
 
     log.info("DONE")
     log.info("Summary:")
-    log.info("  Upload completed at: " + dt.now().strftime("%H:%M:%S %m/%d/%y"))
-    log.info("  {} of {} images loaded".format(success_count,
-                                               success_count + error_count))
+    log.info(
+        "  Upload completed at: " + dt.now().strftime("%H:%M:%S %m/%d/%y")
+    )
+    log.info(
+        "  {} of {} images loaded".format(
+            success_count, success_count + error_count
+        )
+    )
     log.info("\n")
     log.info("Remember to link your workflow to this subject set")
 
@@ -163,7 +178,7 @@ def upload(imgdir, projid, dataset_name, opts, **kwargs):
 
 
 def manifest(imgdir, opts, ext=None):
-    '''
+    """
     Does:
         - Generates a generic manifest in the specified image directory.
         - Fields are an id in the format [date]-[time]-[filenumber] and
@@ -179,14 +194,14 @@ def manifest(imgdir, opts, ext=None):
 
     Notes:
         - Default supported image types: [ tiff, jpg, png ] - can specify any
-    '''
+    """
     if not osp.isdir(imgdir):
         log.error("Image directory " + imgdir + " does not exist")
         return False
 
     log.info("Manifest being generated with fields: [ id, filename ]")
-    mfile = open(osp.join(imgdir, 'manifest.csv'), 'w')
-    writer = csv.writer(mfile, lineterminator='\n')
+    mfile = open(osp.join(imgdir, "manifest.csv"), "w")
+    writer = csv.writer(mfile, lineterminator="\n")
     writer.writerow(["id", "filename"])
 
     idtag = dt.now().strftime("%m%d%y-%H%M%S")
@@ -199,31 +214,37 @@ def manifest(imgdir, opts, ext=None):
     img_c = 0
     for id, filename in enumerate(os.listdir(imgdir)):
         if PATTERN.match(filename):
-            writer.writerow(["{}-{:04d}".format(idtag, id),
-                             osp.join(imgdir, filename)])
+            writer.writerow(
+                ["{}-{:04d}".format(idtag, id), osp.join(imgdir, filename)]
+            )
             img_c += 1
         if img_c == 999:
-            log.warning("Zooniverse's default limit of subjects per"
-                        + " upload is 1000.")
+            log.warning(
+                "Zooniverse's default limit of subjects per"
+                + " upload is 1000."
+            )
             if not utils.get_yn("Continue adding images to manifest?"):
                 break
             img_c += 1
 
     if img_c == 0:
         log.error("Could not generate manifest.")
-        log.error("No images found in " + imgdir + " with file extension:"
-                  + (opts.extension if opts.extension else "[jpg,png,tiff]"))
+        log.error(
+            "No images found in "
+            + imgdir
+            + " with file extension:"
+            + (opts.extension if opts.extension else "[jpg,png,tiff]")
+        )
         return False
     else:
-        log.info("DONE: {} subjects written to manifest"
-                 .format(img_c))
+        log.info("DONE: {} subjects written to manifest".format(img_c))
 
     mfile.close()
     return True
 
 
 def export(projid, outfile, opts, **kwargs):
-    '''
+    """
     %prog export project_id output_dir
 
     Does:
@@ -238,7 +259,7 @@ def export(projid, outfile, opts, **kwargs):
             -desc: Path to the image directory with images to be uploaded
     Returns:
         None
-    '''
+    """
 
     project = utils.connect(projid, **kwargs)
 
@@ -250,7 +271,7 @@ def export(projid, outfile, opts, **kwargs):
         # but the report never downloads and goes into an infinite loop
         # export = project.get_export(opts.type, generate=True)
 
-        with open(outfile, 'w') as zoof:
+        with open(outfile, "w") as zoof:
             zoof.write(export.text)
     except PanoptesAPIException as e:
         log.error("Error getting export")
@@ -264,16 +285,20 @@ def export(projid, outfile, opts, **kwargs):
 
 class utils:
     def convert(imgdir, ext=None):
-        ''' Image compression and conversion to jpg '''
+        """Image compression and conversion to jpg"""
 
         cmd = ["mogrify", "-strip", "-quality", "85%", "-format", "jpg"]
         try:
             if ext:
                 cmd = cmd.append("*." + ext)
             else:
-                cmd.append([osp.join(imgdir, "*.jpg"),
-                            osp.join(imgdir, "*.png"),
-                            osp.join(imgdir, "*.tiff")])
+                cmd.append(
+                    [
+                        osp.join(imgdir, "*.jpg"),
+                        osp.join(imgdir, "*.png"),
+                        osp.join(imgdir, "*.tiff"),
+                    ]
+                )
             proc_ret = run(cmd, shell=True)
         except CalledProcessError as e:
             log.error("Failed to compress images")
@@ -283,11 +308,11 @@ class utils:
         return True
 
     def connect(projid, **kwargs):
-        ''' Override of panoptes connect method '''
+        """Override of panoptes connect method"""
 
-        if 'un' in kwargs and 'pw' in kwargs:
-            un = kwargs['un']
-            pw = kwargs['pw']
+        if "un" in kwargs and "pw" in kwargs:
+            un = kwargs["un"]
+            pw = kwargs["pw"]
         else:
             un = input("Enter zooniverse username: ")
             pw = getpass()
@@ -305,7 +330,7 @@ class utils:
     def get_yn(message):
         while True:
             val = input(message + " [y/n] ")
-            if val.lower() in ['y', 'n']:
-                return True if val.lower() == 'y' else False
+            if val.lower() in ["y", "n"]:
+                return True if val.lower() == "y" else False
             else:
                 print("Invalid input")

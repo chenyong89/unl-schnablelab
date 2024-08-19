@@ -32,11 +32,13 @@ dependencies = [
   "scikit-image",
   "opencv-python",
   "imutils",
+  "pre-commit",
+  "ruff"
 ]
 
 [project.urls]
 Homepage = "https://example.com"
-Repository = "https://github.com/chenyong89/unl-schnablelab/tree/maint"
+Repository = "https://github.com/chenyong89/unl-schnablelab/tree/main"
 
 [tool.setuptools]
 zip-safe = false
@@ -44,3 +46,107 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+# default value:
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+# Enable fix behavior by-default when running ruff
+# default value: fale
+fix = true
+
+# default value: 88
+line-length = 79
+
+# PEP 8 recommends using 4 spaces per indentation level.
+indent-width = 4
+
+# ruff version
+required-version = ">=0.6.1"
+
+# default value: false
+show-fixes = false
+
+# default value: true
+respect-gitignore = true
+
+# Allow imports relative to the "src" and "test" directories.
+src = ["src", "test"]
+
+# The minimum Python version to target
+# use requires-python in [project] is recommended
+# If both are specified, target-version takes precedence over requires-python.
+target-version = "py310"
+
+[tool.ruff.format]
+exclude = ["src/schnablelab/apps/tassel-5-standalone/*"]
+
+# Whether to format code snippets in docstrings.
+# by default, ruff doesn't format docstrings
+docstring-code-format = true
+
+# match with code line length
+docstring-code-line-length = 79
+
+# tab or space
+indent-style = "space"
+
+# Like Black, automatically detect the appropriate line ending.
+# "auto" | "lf" | "cr-lf" | "native"
+line-ending = "auto"
+
+# the preferred quote character for strings. double or single
+quote-style = "double"
+
+# default value: false
+skip-magic-trailing-comma = true
+
+
+
+[tool.ruff.lint]
+exclude = ["src/schnablelab/apps/tassel-5-standalone/*"]
+
+# A list of rule codes or prefixes to enable, default: ["E", "F"]
+# F: Pyflakes
+# E: subset of the pycodestyle
+# B: flake8-bugbear
+# Q: flake8-quotes
+select = ["E4", "E7", "E9", "F"]
+
+# F841: Skip unused variable rules
+# E722 Do not use bare `except`
+# F811 Redefinition of unused ..
+# E741 Ambiguous variable name
+ignore = ["F841", "E741", "F811", "E722"]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+
+# Only ignore variables named "_".
+dummy-variable-rgx = "^_$"

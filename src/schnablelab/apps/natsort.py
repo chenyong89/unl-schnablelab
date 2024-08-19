@@ -7,7 +7,7 @@ Adapted from Seth M. Morton's natsort library:
 Here are a collection of examples of how this module can be used.
 See the README or the natsort homepage for more details.
 
-    >>> a = ['a2', 'a5', 'a9', 'a1', 'a4', 'a10', 'a6']
+    >>> a = ["a2", "a5", "a9", "a1", "a4", "a10", "a6"]
     >>> sorted(a)
     ['a1', 'a10', 'a2', 'a4', 'a5', 'a6', 'a9']
     >>> natsorted(a)
@@ -15,7 +15,7 @@ See the README or the natsort homepage for more details.
 
 Here is an example demonstrating how different options sort the same list.
 
-    >>> a = ['a50', 'a51.', 'a50.31', 'a50.4', 'a5.034e1', 'a50.300']
+    >>> a = ["a50", "a51.", "a50.31", "a50.4", "a5.034e1", "a50.300"]
     >>> sorted(a)
     ['a5.034e1', 'a50', 'a50.300', 'a50.31', 'a50.4', 'a51.']
     >>> natsorted(a)
@@ -30,18 +30,18 @@ Here is an example demonstrating how different options sort the same list.
 This demonstrates the signed option.  It can account for negative and positive signs.
 Turning it off treats the '+' or '-' as part of the string.
 
-    >>> a = ['a-5', 'a7', 'a+2']
+    >>> a = ["a-5", "a7", "a+2"]
     >>> sorted(a)
     ['a+2', 'a-5', 'a7']
-    >>> natsorted(a) # signed=True is default, -5 comes first on the number line
+    >>> natsorted(a)  # signed=True is default, -5 comes first on the number line
     ['a-5', 'a+2', 'a7']
-    >>> natsorted(a, signed=False) # 'a' comes before 'a+', which is before 'a-'
+    >>> natsorted(a, signed=False)  # 'a' comes before 'a+', which is before 'a-'
     ['a7', 'a+2', 'a-5']
 
 Sorting version numbers is best with 'number_type=None'.  That is a shortcut
 for 'number_type=int, signed=False'
 
-    >>> a = ['1.9.9a', '1.11', '1.9.9b', '1.11.4', '1.10.1']
+    >>> a = ["1.9.9a", "1.11", "1.9.9b", "1.11.4", "1.10.1"]
     >>> sorted(a)
     ['1.10.1', '1.11', '1.11.4', '1.9.9a', '1.9.9b']
     >>> natsorted(a)
@@ -53,13 +53,13 @@ You can mix types with natsorted.  This can get around the new
 'unorderable types' issue with Python 3.
 
     >>> import sys
-    >>> a = [6, 4.5, '7', '2.5', 'a']
+    >>> a = [6, 4.5, "7", "2.5", "a"]
     >>> natsorted(a)
     ['2.5', 4.5, 6, '7', 'a']
 
 natsort will recursively descend into lists of lists so you can sort by the sublist contents.
 
-    >>> data = [['a1', 'a5'], ['a1', 'a40'], ['a10', 'a1'], ['a2', 'a5']]
+    >>> data = [["a1", "a5"], ["a1", "a40"], ["a10", "a1"], ["a2", "a5"]]
     >>> sorted(data)
     [['a1', 'a40'], ['a1', 'a5'], ['a10', 'a1'], ['a2', 'a5']]
     >>> natsorted(data)
@@ -67,8 +67,8 @@ natsort will recursively descend into lists of lists so you can sort by the subl
 
 """
 
-
 import re
+
 try:
     basestring
 except NameError:
@@ -76,27 +76,27 @@ except NameError:
 
 
 # The regex that locates floats
-float_sign_exp_re = re.compile(r'([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)')
-float_nosign_exp_re = re.compile(r'(\d*\.?\d+(?:[eE][-+]?\d+)?)')
-float_sign_noexp_re = re.compile(r'([-+]?\d*\.?\d+)')
-float_nosign_noexp_re = re.compile(r'(\d*\.?\d+)')
+float_sign_exp_re = re.compile(r"([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)")
+float_nosign_exp_re = re.compile(r"(\d*\.?\d+(?:[eE][-+]?\d+)?)")
+float_sign_noexp_re = re.compile(r"([-+]?\d*\.?\d+)")
+float_nosign_noexp_re = re.compile(r"(\d*\.?\d+)")
 # Integer regexes
-int_nosign_re = re.compile(r'(\d+)')
-int_sign_re = re.compile(r'([-+]?\d+)')
+int_nosign_re = re.compile(r"(\d+)")
+int_sign_re = re.compile(r"([-+]?\d+)")
 # This dict will help select the correct regex and number conversion function.
 regex_and_num_function_chooser = {
-    (float, True,  True)  : (float_sign_exp_re,     float),
-    (float, True,  False) : (float_sign_noexp_re,   float),
-    (float, False, True)  : (float_nosign_exp_re,   float),
-    (float, False, False) : (float_nosign_noexp_re, float),
-    (int,   True,  True)  : (int_sign_re,   int),
-    (int,   True,  False) : (int_sign_re,   int),
-    (int,   False, True)  : (int_nosign_re, int),
-    (int,   False, False) : (int_nosign_re, int),
-    (None,  True,  True)  : (int_nosign_re, int),
-    (None,  True,  False) : (int_nosign_re, int),
-    (None,  False, True)  : (int_nosign_re, int),
-    (None,  False, False) : (int_nosign_re, int),
+    (float, True, True): (float_sign_exp_re, float),
+    (float, True, False): (float_sign_noexp_re, float),
+    (float, False, True): (float_nosign_exp_re, float),
+    (float, False, False): (float_nosign_noexp_re, float),
+    (int, True, True): (int_sign_re, int),
+    (int, True, False): (int_sign_re, int),
+    (int, False, True): (int_nosign_re, int),
+    (int, False, False): (int_nosign_re, int),
+    (None, True, True): (int_nosign_re, int),
+    (None, True, False): (int_nosign_re, int),
+    (None, False, True): (int_nosign_re, int),
+    (None, False, False): (int_nosign_re, int),
 }
 
 
@@ -111,7 +111,7 @@ def remove_empty(s):
     """
     while True:
         try:
-            s.remove('')
+            s.remove("")
         except ValueError:
             break
     return s
@@ -136,7 +136,7 @@ def _number_finder(s, regex, numconv):
     # If the list begins with a number, lead with an empty string.
     # This is used to get around the "unorderable types" issue.
     if not isinstance(s[0], basestring):
-        return [''] + s
+        return [""] + s
     else:
         return s
 
@@ -205,10 +205,10 @@ def natsort_key(s, number_type=int, signed=False, exp=False):
 
     # If we are dealing with non-strings, return now
     if not isinstance(s, basestring):
-        if hasattr(s, '__getitem__'):
+        if hasattr(s, "__getitem__"):
             return tuple(natsort_key(x) for x in s)
         else:
-            return ('', s,)
+            return ("", s)
 
     # Convert to the proper tuple and return
     inp_options = (number_type, signed, exp)
@@ -218,14 +218,22 @@ def natsort_key(s, number_type=int, signed=False, exp=False):
     except KeyError:
         # Report errors properly
         if number_type not in (float, int) or number_type is not None:
-            raise ValueError("natsort_key: 'number_type' "
-                             "parameter '{0}'' invalid".format(str(number_type)))
+            raise ValueError(
+                "natsort_key: 'number_type' "
+                "parameter '{0}'' invalid".format(str(number_type))
+            )
         elif signed not in (True, False):
-            raise ValueError("natsort_key: 'signed' "
-                             "parameter '{0}'' invalid".format(str(signed)))
+            raise ValueError(
+                "natsort_key: 'signed' " "parameter '{0}'' invalid".format(
+                    str(signed)
+                )
+            )
         elif exp not in (True, False):
-            raise ValueError("natsort_key: 'exp' "
-                             "parameter '{0}'' invalid".format(str(exp)))
+            raise ValueError(
+                "natsort_key: 'exp' " "parameter '{0}'' invalid".format(
+                    str(exp)
+                )
+            )
 
 
 def natsorted(seq, key=lambda x: x, number_type=float, signed=True, exp=True):
@@ -242,12 +250,17 @@ def natsorted(seq, key=lambda x: x, number_type=float, signed=True, exp=True):
         [('c', 'num2'), ('a', 'num3'), ('b', 'num5')]
 
     """
-    return sorted(seq, key=lambda x: natsort_key(key(x),
-                                                 number_type=number_type,
-                                                 signed=signed, exp=exp))
+    return sorted(
+        seq,
+        key=lambda x: natsort_key(
+            key(x), number_type=number_type, signed=signed, exp=exp
+        ),
+    )
 
 
-def index_natsorted(seq, key=lambda x: x, number_type=float, signed=True, exp=True):
+def index_natsorted(
+    seq, key=lambda x: x, number_type=float, signed=True, exp=True
+):
     """\
     Sorts a sequence naturally, but returns a list of sorted the
     indeces and not the sorted list.
@@ -269,21 +282,26 @@ def index_natsorted(seq, key=lambda x: x, number_type=float, signed=True, exp=Tr
 
     """
     from operator import itemgetter
+
     item1 = itemgetter(1)
     # Pair the index and sequence together, then sort by
     index_seq_pair = [[x, key(y)] for x, y in zip(range(len(seq)), seq)]
-    index_seq_pair.sort(key=lambda x: natsort_key(item1(x),
-                                                  number_type=number_type,
-                                                  signed=signed, exp=exp))
+    index_seq_pair.sort(
+        key=lambda x: natsort_key(
+            item1(x), number_type=number_type, signed=signed, exp=exp
+        )
+    )
     return [x[0] for x in index_seq_pair]
 
 
 def test():
     from doctest import DocTestSuite
+
     return DocTestSuite()
 
 
 # Test this module
-if __name__ == '__main__':
+if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
