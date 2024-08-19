@@ -1,26 +1,32 @@
 default_language_version:
   python: python3.10
-exclude: '^src/schnablelab/apps/*'
+exclude: '^src/schnablelab/apps/tassel-5-standalone/*'
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
-    hooks:
-    - id: check-added-large-files
-    - id: check-case-conflict
-    - id: check-docstring-first
-    - id: check-json
-    - id: pretty-format-json
-    - id: check-toml
-    - id: check-xml
-    - id: check-yaml
-      exclude: 'mkdocs.yml'
-    - id: sort-simple-yaml
-    - id: detect-private-key
-    - id: check-merge-conflict
-    - id: check-symlinks
-    - id: mixed-line-ending
-    - id: name-tests-test
-    - id: no-commit-to-branch
-    - id: end-of-file-fixer
-    - id: trailing-whitespace
-    - id: requirements-txt-fixer
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+  - id: check-added-large-files
+  - id: check-case-conflict
+  - id: check-docstring-first
+  - id: check-json
+  - id: pretty-format-json
+  - id: check-toml
+  - id: check-xml
+  - id: check-yaml
+    exclude: 'mkdocs.yml'
+  - id: sort-simple-yaml
+  - id: detect-private-key
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: mixed-line-ending
+  - id: name-tests-test
+  - id: no-commit-to-branch
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+  - id: requirements-txt-fixer
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.6.1
+  hooks:
+  - id: ruff # linter
+    args: [ --fix ]
+  - id: ruff-format # formatter
