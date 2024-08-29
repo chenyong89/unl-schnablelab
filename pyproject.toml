@@ -33,7 +33,10 @@ dependencies = [
   "opencv-python",
   "imutils",
   "pre-commit",
-  "ruff"
+  "ruff",
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocstrings-python"
 ]
 
 [project.urls]
